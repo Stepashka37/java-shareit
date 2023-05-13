@@ -2,9 +2,6 @@ package ru.practicum.shareit.user.model;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
 
 /**
  * TODO Sprint add-controllers.

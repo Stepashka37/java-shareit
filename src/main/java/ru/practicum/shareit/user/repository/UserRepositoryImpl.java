@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class UserRepositoryImpl implements UserRepository{
+public class UserRepositoryImpl implements UserRepository {
 
     private List<User> users = new ArrayList<>();
     private long userId = 1;
@@ -27,7 +27,7 @@ public class UserRepositoryImpl implements UserRepository{
 
     @Override
     public User addNewUser(User user) {
-        if(users.stream().filter(x -> x.getEmail().equals(user.getEmail())).findAny().isPresent()) {
+        if (users.stream().filter(x -> x.getEmail().equals(user.getEmail())).findAny().isPresent()) {
             throw new IllegalArgumentException("Пользователь с таким email уже существует");
         }
         user.setId(userId);
@@ -40,7 +40,7 @@ public class UserRepositoryImpl implements UserRepository{
     @Override
     public User updateUser(long userId, User user) {
 
-        if(users.stream()
+        if (users.stream()
                 .filter(x -> x.getId() != userId)
                 .filter(x -> x.getEmail().equals(user.getEmail()))
                 .findAny()

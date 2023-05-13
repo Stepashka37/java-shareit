@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> getAllUsers(){
+    public List<UserDto> getAllUsers() {
         return userService.getAllUsers().stream()
                 .map(x -> userMapper.modelToDto(x))
                 .collect(Collectors.toList());
@@ -57,12 +57,12 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteUserById(@PathVariable long userId){
+    public void deleteUserById(@PathVariable long userId) {
         userService.deleteUserById(userId);
     }
 
     @DeleteMapping
-    public void deleteAllUsers(){
+    public void deleteAllUsers() {
         userService.deleteUsers();
     }
 

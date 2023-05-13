@@ -15,7 +15,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public static Booking dtoToModel(BookingDto bookingDto){
+    public static Booking dtoToModel(BookingDto bookingDto) {
         return Booking.builder()
                 .start(bookingDto.getStart())
                 .finish(bookingDto.getFinish())

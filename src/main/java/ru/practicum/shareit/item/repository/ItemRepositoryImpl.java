@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.ItemNotFoundException;
-import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.ValidationException;
@@ -10,11 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Repository
-public class ItemRepositoryImpl implements ItemRepository{
+public class ItemRepositoryImpl implements ItemRepository {
     private Map<Long, List<Item>> items = new HashMap<>();
     private long itemId = 1;
 
@@ -55,16 +53,15 @@ public class ItemRepositoryImpl implements ItemRepository{
         Item itemFromList = items.get(userId).stream()
                 .filter(x -> x.getItemId() == item.getItemId())
                 .findAny().orElseThrow(() -> new ItemNotFoundException("Предмет с id" + item.getItemId() + " не найден"));
-        if(item.getName() != null && !item.getName().isBlank()) {
+        if (item.getName() != null && !item.getName().isBlank()) {
             itemFromList.setName(item.getName());
         }
-        if(item.getDescription() != null && !item.getDescription().isBlank()) {
+        if (item.getDescription() != null && !item.getDescription().isBlank()) {
             itemFromList.setDescription(item.getDescription());
         }
-        if(item.getIsAvailable() != null) {
+        if (item.getIsAvailable() != null) {
             itemFromList.setIsAvailable(item.getIsAvailable());
         }
-
 
         items.get(userId).removeIf(x -> x.getItemId() == item.getItemId());
         items.get(userId).add(itemFromList);
