@@ -54,7 +54,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchAvailableItems(@RequestHeader("X-Sharer-User-id") long userId, @RequestParam String text){
+    public List<ItemDto> searchAvailableItems(@RequestHeader("X-Sharer-User-id") long userId, @RequestParam String text) {
         return itemService.searchAvailableItems(userId, text).stream()
                 .map(x -> itemMapper.modelToDto(x))
                 .collect(Collectors.toList());
