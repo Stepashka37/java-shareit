@@ -2,10 +2,15 @@ package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static ru.practicum.shareit.user.dto.mapper.UserMapper.dtoToModel;
+import static ru.practicum.shareit.user.dto.mapper.UserMapper.modelToDto;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -14,19 +19,23 @@ public class UserRepositoryImpl implements UserRepository {
     private long userId = 1;
 
     @Override
-    public User getUserById(long userId) {
+    public UserDto getUserById(long userId) {
 
         return users.stream().filter(user -> user.getId() == userId).findAny()
+                .map(x -> modelToDto(x))
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с id" + userId + "не найден"));
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return users;
+    public List<UserDto> getAllUsers() {
+        return users.stream()
+                .map(x -> modelToDto(x))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public User addNewUser(User user) {
+    public UserDto addNewUser(UserDto userDto) {
+        User user = dtoToModel(userDto);
         if (users.stream().filter(x -> x.getEmail().equals(user.getEmail())).findAny().isPresent()) {
             throw new IllegalArgumentException("Пользователь с таким email уже существует");
         }
@@ -34,12 +43,12 @@ public class UserRepositoryImpl implements UserRepository {
         users.add(user);
         User toReturn = users.stream().filter(x -> x.getId() == userId).findAny().get();
         userId++;
-        return toReturn;
+        return modelToDto(toReturn);
     }
 
     @Override
-    public User updateUser(long userId, User user) {
-
+    public UserDto updateUser(long userId, UserDto userDto) {
+        User user = dtoToModel(userDto);
         if (users.stream()
                 .filter(x -> x.getId() != userId)
                 .filter(x -> x.getEmail().equals(user.getEmail()))
@@ -65,7 +74,7 @@ public class UserRepositoryImpl implements UserRepository {
             users.add(userFromList);
         }
 
-        return userFromList;
+        return modelToDto(userFromList);
     }
 
 

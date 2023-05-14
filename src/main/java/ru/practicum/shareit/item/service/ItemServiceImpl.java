@@ -2,7 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -21,39 +21,39 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public Item createItem(long userId, Item item) {
+    public ItemDto createItem(long userId, ItemDto itemDto) {
         userRepository.getUserById(userId);
-        Item itemCreated = itemRepository.createItem(userId, item);
-        log.info("Создали предмет с id{}", itemCreated.getItemId());
+        ItemDto itemCreated = itemRepository.createItem(userId, itemDto);
+        log.info("Создали предмет с id{}", itemCreated.getId());
         return itemCreated;
     }
 
     @Override
-    public Item updateItem(long userId, Item item) {
+    public ItemDto updateItem(long userId, ItemDto itemDto) {
         userRepository.getUserById(userId);
-        Item itemUpdated = itemRepository.updateItem(userId, item);
-        log.info("Обновили данные предмета с id{}", itemUpdated.getItemId());
+        ItemDto itemUpdated = itemRepository.updateItem(userId, itemDto);
+        log.info("Обновили данные предмета с id{}", itemUpdated.getId());
         return itemUpdated;
     }
 
     @Override
-    public Item getItemById(long userId, long itemId) {
+    public ItemDto getItemById(long userId, long itemId) {
         userRepository.getUserById(userId);
         return itemRepository.getItemById(userId, itemId);
     }
 
     @Override
-    public List<Item> getOwnerItems(long userId) {
+    public List<ItemDto> getOwnerItems(long userId) {
         userRepository.getUserById(userId);
-        List<Item> userItems = itemRepository.getOwnerItems(userId);
+        List<ItemDto> userItems = itemRepository.getOwnerItems(userId);
         log.info("Получили все предметы пользователя с id{}", userId);
         return userItems;
     }
 
     @Override
-    public List<Item> searchAvailableItems(long userId, String text) {
+    public List<ItemDto> searchAvailableItems(long userId, String text) {
         userRepository.getUserById(userId);
-        List<Item> availableItems = itemRepository.searchAvailableItems(text);
+        List<ItemDto> availableItems = itemRepository.searchAvailableItems(text);
         log.info("Получили все доступные предметы по фразе ", text);
         return availableItems;
     }

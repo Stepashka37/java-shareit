@@ -2,7 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
@@ -18,25 +18,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(long userId) {
+    public UserDto getUserById(long userId) {
         return userRepository.getUserById(userId);
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userRepository.getAllUsers();
     }
 
     @Override
-    public User createNewUser(User user) {
-        User userCreated = userRepository.addNewUser(user);
+    public UserDto createNewUser(UserDto userDto) {
+        UserDto userCreated = userRepository.addNewUser(userDto);
         log.info("Создали пользователя с id{}", userCreated.getId());
         return userCreated;
     }
 
     @Override
-    public User updateUser(long userId, User user) {
-        User userUpdated = userRepository.updateUser(userId, user);
+    public UserDto updateUser(long userId, UserDto userDto) {
+        UserDto userUpdated = userRepository.updateUser(userId, userDto);
         log.info("Обновили данные пользователя с id{}", userUpdated.getId());
         return userUpdated;
     }

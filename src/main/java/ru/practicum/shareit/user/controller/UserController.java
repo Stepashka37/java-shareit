@@ -5,11 +5,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.mapper.UserMapper;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -27,33 +25,25 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public UserDto getUserById(@PathVariable long userId) {
-        User fromService = userService.getUserById(userId);
-        return userMapper.modelToDto(fromService);
+        UserDto fromService = userService.getUserById(userId);
+        return fromService;
     }
 
     @GetMapping
     public List<UserDto> getAllUsers() {
-        return userService.getAllUsers().stream()
-                .map(x -> userMapper.modelToDto(x))
-                .collect(Collectors.toList());
+        return userService.getAllUsers();
     }
 
     @PostMapping
     public UserDto createUser(@Validated(UserDto.New.class) @RequestBody UserDto userDto) {
-        User userFromRequest = userMapper.dtoToModel(userDto);
-        User userCreated = userService.createNewUser(userFromRequest);
-        UserDto userDtoFromService = userMapper.modelToDto(userCreated);
-
-        return userDtoFromService;
+        UserDto userCreated = userService.createNewUser(userDto);
+        return userCreated;
     }
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@PathVariable long userId, @Validated(UserDto.Update.class) @RequestBody UserDto userDto) {
-        User userFromRequest = userMapper.dtoToModel(userDto);
-        User userUpdated = userService.updateUser(userId, userFromRequest);
-        UserDto userDtoFromService = userMapper.modelToDto(userUpdated);
-        System.out.println(userDtoFromService);
-        return userDtoFromService;
+        UserDto userUpdated = userService.updateUser(userId, userDto);
+        return userUpdated;
     }
 
     @DeleteMapping("/{userId}")
