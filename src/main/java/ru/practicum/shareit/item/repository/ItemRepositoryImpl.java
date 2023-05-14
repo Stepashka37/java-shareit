@@ -44,7 +44,6 @@ public class ItemRepositoryImpl implements ItemRepository {
                     .get();
         }
         ++itemId;
-        
         return modelToDto(itemToReturn);
     }
 
@@ -68,7 +67,6 @@ public class ItemRepositoryImpl implements ItemRepository {
 
         items.get(userId).removeIf(x -> x.getItemId() == item.getItemId());
         items.get(userId).add(itemFromList);
-
         return modelToDto(itemFromList);
     }
 
@@ -80,7 +78,6 @@ public class ItemRepositoryImpl implements ItemRepository {
                                 .findAny()
                                 .map(x -> modelToDto(x))
                                 .orElseThrow(() -> new ItemNotFoundException("Предмет с id" + itemIdFromReq + " не найден"));
-
         return itemFromList;
     }
 
