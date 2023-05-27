@@ -10,7 +10,7 @@ public class ItemMapper {
 
     public static ItemDto modelToDto(Item item) {
         return ItemDto.builder()
-                .id(item.getItemId())
+                .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getIsAvailable())
@@ -19,7 +19,7 @@ public class ItemMapper {
 
     public static Item dtoToModel(ItemDto itemDto) {
         return Item.builder()
-                .itemId(itemDto.getId())
+                .id(itemDto.getId())
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
                 .isAvailable(itemDto.getAvailable())

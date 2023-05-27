@@ -5,23 +5,49 @@ import lombok.Data;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 
 @Data
 @Builder
+@Entity
 public class Booking {
-    private final long bookingId;
 
-    private final LocalDateTime start;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private  long id;
 
-    private final LocalDateTime finish;
+    @Column(name = "start_date")
+    private  LocalDateTime start;
 
-    private final Item item;
+    @Column(name = "end_date")
+    private  LocalDateTime finish;
 
-    private final User booker;
+    @OneToOne
+    @JoinColumn(name = "item_id",
+    referencedColumnName = "id")
+    private  Item item;
 
-    private final BookingStatus status;
+    @OneToOne
+    @JoinColumn(name = "booker_id",
+            referencedColumnName = "id")
+    private  User booker;
 
+    @Column(name = "booking_status")
+    private  BookingStatus status;
+
+    public Booking(long id, LocalDateTime start, LocalDateTime finish, Item item, User booker, BookingStatus status) {
+        this.id = id;
+        this.start = start;
+        this.finish = finish;
+        this.item = item;
+        this.booker = booker;
+        this.status = status;
+    }
+
+    public Booking() {
+
+    }
 }
 

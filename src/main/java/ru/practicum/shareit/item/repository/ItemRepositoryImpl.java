@@ -1,27 +1,45 @@
 package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
-import javax.validation.ValidationException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static ru.practicum.shareit.item.dto.mapper.ItemMapper.dtoToModel;
-import static ru.practicum.shareit.item.dto.mapper.ItemMapper.modelToDto;
 
 @Repository
 public class ItemRepositoryImpl implements ItemRepository {
     private Map<Long, List<Item>> items = new HashMap<>();
     private long itemId = 1;
 
+    @Override
+    public ItemDto createItem(long userId, ItemDto item) {
+        return null;
+    }
 
     @Override
+    public ItemDto updateItem(long userId, ItemDto item) {
+        return null;
+    }
+
+    @Override
+    public ItemDto getItemById(long userId, long itemId) {
+        return null;
+    }
+
+    @Override
+    public List<ItemDto> getOwnerItems(long userId) {
+        return null;
+    }
+
+    @Override
+    public List<ItemDto> searchAvailableItems(String text) {
+        return null;
+    }
+
+
+   /* @Override
     public ItemDto createItem(long userId, ItemDto itemDto) {
         Item item = dtoToModel(itemDto);
         if (userId < 1) {
@@ -100,5 +118,5 @@ public class ItemRepositoryImpl implements ItemRepository {
                 .map(x -> modelToDto(x))
                 .collect(Collectors.toList());;
         return itemList;
-    }
+    }*/
 }
