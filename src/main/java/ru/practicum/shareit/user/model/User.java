@@ -23,8 +23,12 @@ public class User {
     @Column
     private  String email;
 
+    /*@OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    private List<Item> items;*/
+
     public User() {
     }
+
 
     public User(long id, String name, String email) {
         this.id = id;

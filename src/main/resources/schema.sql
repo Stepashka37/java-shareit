@@ -1,4 +1,4 @@
-drop table if exists items, booking, users,  requests, comments cascade ;
+drop table if exists items, bookings, users,  requests, comments cascade ;
 drop type if exists booking_status cascade;
 
 
@@ -28,7 +28,8 @@ create table if not exists  requests
     description  varchar(500) not null,
     requestor_id integer      not null
         constraint requests_users_id_fk
-            references users
+            references users,
+            created      timestamp
 );
 
 alter table if exists  requests
@@ -66,8 +67,8 @@ create table if not exists  bookings
     id         serial
         constraint bookings_pk
             primary key,
-    start_date timestamp not null,
-    end_date   timestamp not null,
+    start_date timestamp with time zone not null,
+    end_date   timestamp with time zone not null,
     item_id    integer   not null
         constraint bookings_items_id_fk
             references items
@@ -76,7 +77,7 @@ create table if not exists  bookings
         constraint bookings_users_id_fk
             references users
             on delete cascade,
-    status     booking_status   not null
+    status     varchar   not null
 );
 
 alter table if exists bookings
