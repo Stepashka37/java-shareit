@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoWithBookings;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
@@ -31,13 +32,13 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@RequestHeader("X-Sharer-User-id") long userId, @PathVariable long itemId) {
-        ItemDto itemRequested = itemService.getItemById(userId, itemId);
+    public ItemDtoWithBookings getItemById(@RequestHeader("X-Sharer-User-id") long userId, @PathVariable long itemId) {
+        ItemDtoWithBookings itemRequested = itemService.getItemById(userId, itemId);
         return itemRequested;
     }
 
     @GetMapping
-    public List<ItemDto> getOwnerItems(@RequestHeader("X-Sharer-User-id") long userId) {
+    public List<ItemDtoWithBookings> getOwnerItems(@RequestHeader("X-Sharer-User-id") long userId) {
         return itemService.getOwnerItems(userId);
     }
 
