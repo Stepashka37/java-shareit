@@ -8,11 +8,11 @@ create table if not exists users
         constraint users_pk
             primary key,
     name  varchar(50) not null,
-    email varchar(50) unique 
+    email varchar(50) unique
 );
 
-alter table if exists  users
-    owner to postgres;
+--alter table if exists  users
+    --owner to postgres;
 
 create unique index if not exists  users_email_uindex
     on users (email);
@@ -32,8 +32,8 @@ create table if not exists  requests
             created      timestamp
 );
 
-alter table if exists  requests
-    owner to postgres;
+--alter table if exists  requests
+  --  owner to postgres;
 
 create table if not exists  items
 (
@@ -53,8 +53,8 @@ create table if not exists  items
             on delete cascade
 );
 
-alter table if exists items
-    owner to postgres;
+--alter table if exists items
+   -- owner to postgres;
 
 create unique index if not exists  items_id_uindex
     on items (id);
@@ -80,8 +80,8 @@ create table if not exists  bookings
     status     varchar   not null
 );
 
-alter table if exists bookings
-    owner to postgres;
+--alter table if exists bookings
+  --  owner to postgres;
 
 create unique index if not exists  bookings_id_uindex
     on bookings (id);
@@ -106,8 +106,8 @@ create table if not exists  comments
     created timestamp
 );
 
-alter table if exists  comments
-    owner to postgres;
+--alter table if exists  comments
+   -- owner to postgres;
 
 create unique index if not exists   comments_id_uindex
     on comments (id);
