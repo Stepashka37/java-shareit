@@ -102,7 +102,8 @@ create table if not exists  comments
     author_id integer
         constraint comments_users_id_fk
             references users
-            on delete cascade
+            on delete cascade,
+    created timestamp
 );
 
 alter table if exists  comments

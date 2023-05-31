@@ -2,13 +2,11 @@ package ru.practicum.shareit.booking;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingDtoToCreate;
 import ru.practicum.shareit.exception.*;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.ItemRepository;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserRepository;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
@@ -16,8 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.booking.dto.mapper.BookingMapper.dtoToCreateToModel;
-import static ru.practicum.shareit.booking.dto.mapper.BookingMapper.modelToDto;
+import static ru.practicum.shareit.booking.BookingMapper.dtoToCreateToModel;
+import static ru.practicum.shareit.booking.BookingMapper.modelToDto;
 
 @Service
 public class BookingServiceImpl implements BookingService{
