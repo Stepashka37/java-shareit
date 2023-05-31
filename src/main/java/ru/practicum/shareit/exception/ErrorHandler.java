@@ -29,14 +29,14 @@ public class ErrorHandler {
 
     @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse annotationValidationExc(final  RuntimeException exc) {
+    public ErrorResponse annotationValidationExc(final RuntimeException exc) {
         log.error("400: " + exc.getMessage());
         return new ErrorResponse("Ошибка валидации с помощью аннотаций", exc.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse annotationValidationExc(final  ItemNotAvailableException exc) {
+    public ErrorResponse annotationValidationExc(final ItemNotAvailableException exc) {
         log.error("400: " + exc.getMessage());
         return new ErrorResponse("Ошибка бронирования - данный предмет уже занят", exc.getMessage());
     }

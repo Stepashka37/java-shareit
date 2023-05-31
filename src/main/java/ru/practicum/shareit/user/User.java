@@ -15,16 +15,13 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  long id;
+    private long id;
 
     @Column
-    private  String name;
+    private String name;
 
     @Column
-    private  String email;
-
-    /*@OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
-    private List<Item> items;*/
+    private String email;
 
     public User() {
     }

@@ -12,10 +12,11 @@ import java.util.List;
 @Data
 @Builder
 public class ItemDtoWithBookingsAndComments {
+
     public interface New {
     }
 
-    public interface Exist{
+    public interface Exist {
     }
 
     public interface Update extends ItemDto.Exist {
@@ -29,7 +30,7 @@ public class ItemDtoWithBookingsAndComments {
 
     @NotBlank(groups = {ItemDto.New.class})
     @Size(max = 500, groups = {ItemDto.New.class, ItemDto.Update.class})
-    private  String description;
+    private String description;
 
     @NotNull(groups = {ItemDto.New.class})
     private Boolean available;

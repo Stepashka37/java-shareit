@@ -22,12 +22,12 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "item_id",
-    referencedColumnName = "id")
+            referencedColumnName = "id")
     private Item item;
 
     @OneToOne
     @JoinColumn(name = "author_id",
-    referencedColumnName = "id")
+            referencedColumnName = "id")
     private User user;
 
     @Column

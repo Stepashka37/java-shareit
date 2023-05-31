@@ -15,7 +15,7 @@ public class ItemDto {
     public interface New {
     }
 
-    public interface Exist{
+    public interface Exist {
     }
 
     public interface Update extends Exist {
@@ -29,11 +29,10 @@ public class ItemDto {
 
     @NotBlank(groups = {New.class})
     @Size(max = 500, groups = {New.class, Update.class})
-    private  String description;
+    private String description;
 
     @NotNull(groups = {New.class})
     private Boolean available;
-
 
 
 }

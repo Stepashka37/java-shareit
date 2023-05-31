@@ -16,14 +16,14 @@ public class ItemRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  long id;
+    private long id;
 
     @Column
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "requestor_id",
-    referencedColumnName = "id")
+            referencedColumnName = "id")
     private User requestor;
 
     @Column

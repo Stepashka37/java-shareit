@@ -10,7 +10,6 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     List<Item> findAllByOwnerIdOrderByIdAsc(long userId);
 
-
     @Query("select it " +
             "from Item as it " +
             "where ((lower(it.name) like %:text% " +

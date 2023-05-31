@@ -84,13 +84,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "and b.status = 'WAITING' ")
     List<Booking> findAllItemsWaitingBookings(List userItems, Sort sort);
 
-    /*@Query("select b from Booking as b " +
-            "join b.item as i " +
-            "where i.id = ?1 and " +
-            "b.status = 'APPROVED' and " +
-            "(b.end < ?2 or b.start > ?2)")
-    List<Booking> findAllBookingsByItemId(long itemId, LocalDateTime dateTime);*/
-
     @Query("select b from Booking as b " +
             "join b.item as i " +
             "where i.id = ?1 and " +
@@ -103,6 +96,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "where i.id = ?1 " +
             "and u.id = ?2 " +
             "and b.end < ?3 ")
-    List<Booking> findAllByBookerIdAndItemIdAndEndBefore(long itemId, long bookerId,  LocalDateTime end);
+    List<Booking> findAllByBookerIdAndItemIdAndEndBefore(long itemId, long bookerId, LocalDateTime end);
 
 }

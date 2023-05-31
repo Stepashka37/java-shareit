@@ -87,12 +87,12 @@ public class ItemServiceImpl implements ItemService {
         dtoToReturn.setComments(itemComments);
         if (itemFound.getOwner().getId() == userId) {
             List<Booking> itemBookings = bookingRepository.findAllBookingsByItemId(itemId);
-            if(itemBookings.size() >= 1) {
+            if (itemBookings.size() >= 1) {
                 List<Booking> allPastBookings = itemBookings.stream().filter(x -> x.getStart().isBefore(LocalDateTime.now())).collect(Collectors.toList());
-               BookingDtoForItemHost lastBooking = itemBookings.stream().filter(x -> x.getStart().isBefore(LocalDateTime.now()))
-                       .sorted(Comparator.comparing(Booking::getEnd).reversed())
+                BookingDtoForItemHost lastBooking = itemBookings.stream().filter(x -> x.getStart().isBefore(LocalDateTime.now()))
+                        .sorted(Comparator.comparing(Booking::getEnd).reversed())
                         .findFirst().map(x -> modelToDtoForItem(x))
-                       .orElse(null);
+                        .orElse(null);
 
                 List<Booking> allFutureBookings = itemBookings.stream().filter(x -> x.getStart().isAfter(LocalDateTime.now())).collect(Collectors.toList());
                 BookingDtoForItemHost nextBooking = itemBookings.stream().filter(x -> x.getStart().isAfter(LocalDateTime.now()))
@@ -115,7 +115,7 @@ public class ItemServiceImpl implements ItemService {
         for (Item userItem : userItems) {
             ItemDtoWithBookingsAndComments dtoToReturn = modelToDtoWithBookings(userItem);
             List<Booking> itemBookings = bookingRepository.findAllBookingsByItemId(userItem.getId());
-            if(!itemBookings.isEmpty()) {
+            if (!itemBookings.isEmpty()) {
                 List<Booking> allBookings = itemBookings.stream().filter(x -> x.getEnd().isBefore(LocalDateTime.now())).collect(Collectors.toList());
                 BookingDtoForItemHost lastBooking = itemBookings.stream().filter(x -> x.getEnd().isBefore(LocalDateTime.now()))
                         .findFirst().map(x -> modelToDtoForItem(x)).get();
@@ -125,9 +125,9 @@ public class ItemServiceImpl implements ItemService {
                         .findFirst().map(x -> modelToDtoForItem(x)).get();
                 dtoToReturn.setLastBooking(modelToDtoForItem(allBookings.get(0)));
                 dtoToReturn.setNextBooking(nextBooking);
-        }
-            result.add(dtoToReturn);
             }
+            result.add(dtoToReturn);
+        }
 
         log.info("Получили все предметы пользователя с id{}", userId);
         return result;
@@ -153,7 +153,7 @@ public class ItemServiceImpl implements ItemService {
         Item itemFound = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Item not found"));
 
-        List<Booking> booking = bookingRepository.findAllByBookerIdAndItemIdAndEndBefore( itemId, userId, LocalDateTime.now());
+        List<Booking> booking = bookingRepository.findAllByBookerIdAndItemIdAndEndBefore(itemId, userId, LocalDateTime.now());
 
         if (booking.size() == 0) {
             throw new ValidationException("User haven't booked this item");
@@ -162,14 +162,6 @@ public class ItemServiceImpl implements ItemService {
         commentToSave.setItem(itemFound);
         commentToSave.setUser(userFound);
         commentToSave.setCreated(LocalDateTime.now());
-           /*try {
-
-            } catch (ValidationException e) {
-                throw new ValidationException("Validation exc");
-            } */
-
-
-
 
         Comment comment = commentRepository.save(commentToSave);
         return modelToDto(comment);

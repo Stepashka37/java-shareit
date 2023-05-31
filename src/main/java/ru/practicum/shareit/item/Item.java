@@ -16,26 +16,26 @@ public class Item {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  long id;
+    private long id;
 
     @Column
-    private  String name;
+    private String name;
 
     @Column
-    private  String description;
+    private String description;
 
     @Column(name = "is_available")
-    private  Boolean isAvailable;
+    private Boolean isAvailable;
 
     @ManyToOne
     @JoinColumn(name = "owner_id",
-    referencedColumnName = "id")
+            referencedColumnName = "id")
     private User owner;
 
     @OneToOne
     @JoinColumn(name = "request_id",
-    referencedColumnName = "id")
-    private  ItemRequest request;
+            referencedColumnName = "id")
+    private ItemRequest request;
 
 
     public Item() {

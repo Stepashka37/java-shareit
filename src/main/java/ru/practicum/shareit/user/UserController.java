@@ -13,7 +13,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private  UserMapper userMapper;
+    private UserMapper userMapper;
 
 
     public UserController(UserService userService) {
