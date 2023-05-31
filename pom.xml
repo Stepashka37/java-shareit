@@ -19,6 +19,13 @@
 		<java.version>11</java.version>
 	</properties>
 
+	<!--<distributionManagement>
+		<repository>
+			<id>ShareIt</id>
+			<url>http://central_nexus/server</url>
+		</repository>
+	</distributionManagement>-->
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -86,7 +93,18 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-site-plugin</artifactId>
+			<version>3.7.1</version>
+		</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.0.0</version>
+			</plugin>
 		</plugins>
+
 		<pluginManagement>
 			<plugins>
 				<plugin>
