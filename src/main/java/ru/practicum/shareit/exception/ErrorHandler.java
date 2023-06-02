@@ -41,7 +41,7 @@ public class ErrorHandler {
         return new ErrorResponse("Ошибка бронирования - данный предмет уже занят", exc.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(StateValidationException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse anyOtherExc(final StateValidationException exc) {
         log.error("500: " + exc.getMessage());

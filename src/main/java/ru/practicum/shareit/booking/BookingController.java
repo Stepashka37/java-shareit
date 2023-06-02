@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,14 +38,14 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getUserBookings(@RequestHeader("X-Sharer-User-id") long userId,
-                                            @RequestParam(value = "state", required = false, defaultValue = "ALL") String state) {
+                                            @Nullable @RequestParam(value = "state", defaultValue = "ALL") String state) {
         List<BookingDto> result = bookingService.getUserBookings(userId, state);
         return result;
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getAllUserItemsBookings(@RequestHeader("X-Sharer-User-id") long userId,
-                                                    @RequestParam(value = "state", required = false, defaultValue = "ALL") String state) {
+                                                    @Nullable @RequestParam(value = "state", defaultValue = "ALL") String state) {
         List<BookingDto> result = bookingService.getAllUserItemsBookings(userId, state);
         return result;
     }

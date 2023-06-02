@@ -1,14 +1,14 @@
 package ru.practicum.shareit.item;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
-@Builder
+@Getter
+@Setter
 @Entity
 @Table(name = "comments")
 public class Comment {
@@ -51,5 +51,53 @@ public class Comment {
         this.text = text;
         this.item = item;
         this.user = user;
+    }
+
+    public static CommentBuilder builder() {
+        return new CommentBuilder();
+    }
+
+    public static class CommentBuilder {
+        private long id;
+        private String text;
+        private Item item;
+        private User user;
+        private LocalDateTime created;
+
+        CommentBuilder() {
+        }
+
+        public CommentBuilder id(long id) {
+            this.id = id;
+            return this;
+        }
+
+        public CommentBuilder text(String text) {
+            this.text = text;
+            return this;
+        }
+
+        public CommentBuilder item(Item item) {
+            this.item = item;
+            return this;
+        }
+
+        public CommentBuilder user(User user) {
+            this.user = user;
+            return this;
+        }
+
+        public CommentBuilder created(LocalDateTime created) {
+            this.created = created;
+            return this;
+        }
+
+        public Comment build() {
+            return new Comment(id, text, item, user, created);
+        }
+
+        public String toString() {
+            return "Comment.CommentBuilder(id=" + this.id + ", text=" + this.text + ", item=" + this.item + ", user=" + this.user + ", created=" + this.created + ")";
+        }
     }
 }
