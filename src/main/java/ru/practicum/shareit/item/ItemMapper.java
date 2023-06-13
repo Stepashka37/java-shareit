@@ -7,12 +7,16 @@ import lombok.NoArgsConstructor;
 public class ItemMapper {
 
     public static ItemDto modelToDto(Item item) {
-        return ItemDto.builder()
+        ItemDto result = ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getIsAvailable())
                 .build();
+        if (item.getRequest() != null) {
+            result.setRequestId(item.getRequest().getId());
+        }
+        return result;
     }
 
     public static Item dtoToModel(ItemDto itemDto) {
@@ -33,4 +37,13 @@ public class ItemMapper {
                 .build();
 
     }
+
+    public static ItemShortForRequest modelToShortDto(Item item){
+        return ItemShortForRequest.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .userId(item.getOwner().getId())
+                .build();
+    }
+
 }

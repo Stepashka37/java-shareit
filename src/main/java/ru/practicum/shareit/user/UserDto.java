@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -33,10 +35,12 @@ public class UserDto {
     private long id;
 
     @NotBlank(groups = {New.class})
+    @Size(max = 50)
     private String name;
 
     @NotBlank(groups = {New.class})
     @Email(groups = {New.class, Update.class})
+    @Size(max = 50)
     private String email;
 
 
@@ -70,5 +74,18 @@ public class UserDto {
         public String toString() {
             return "UserDto.UserDtoBuilder(id=" + this.id + ", name=" + this.name + ", email=" + this.email + ")";
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDto userDto = (UserDto) o;
+        return id == userDto.id && name.equals(userDto.name) && email.equals(userDto.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email);
     }
 }

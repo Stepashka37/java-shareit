@@ -10,4 +10,11 @@ class ShareItTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void itShouldCreate() {
+		// Given
+		// When
+		// Then
+
+	}
 }

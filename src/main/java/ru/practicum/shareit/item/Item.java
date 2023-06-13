@@ -6,6 +6,7 @@ import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 
 @Getter
@@ -32,7 +33,7 @@ public class Item {
             referencedColumnName = "id")
     private User owner;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "request_id",
             referencedColumnName = "id")
     private ItemRequest request;
@@ -48,6 +49,19 @@ public class Item {
         this.isAvailable = isAvailable;
         this.owner = owner;
         this.request = request;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Item item = (Item) o;
+        return id == item.id && name.equals(item.name) && description.equals(item.description) && isAvailable.equals(item.isAvailable) && Objects.equals(owner, item.owner) && Objects.equals(request, item.request);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, isAvailable, owner, request);
     }
 
     public static ItemBuilder builder() {

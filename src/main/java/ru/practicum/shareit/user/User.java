@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.util.Objects;
 
 
 @Getter
@@ -18,9 +20,11 @@ public class User {
     private long id;
 
     @Column
+    @Size(max = 50)
     private String name;
 
     @Column
+    @Size(max = 50)
     private String email;
 
     public User() {
@@ -66,6 +70,19 @@ public class User {
 
         public String toString() {
             return "User.UserBuilder(id=" + this.id + ", name=" + this.name + ", email=" + this.email + ")";
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            UserBuilder that = (UserBuilder) o;
+            return id == that.id && name.equals(that.name) && email.equals(that.email);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(id, name, email);
         }
     }
 }

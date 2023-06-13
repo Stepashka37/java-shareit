@@ -13,9 +13,10 @@ import javax.validation.ValidationException;
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class, HostNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class,
+            HostNotFoundException.class, RequestNotFound.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse userNotFoundExc(final RuntimeException exc) {
+    public ErrorResponse notFoundExc(final RuntimeException exc) {
         log.error("404: " + exc.getMessage());
         return new ErrorResponse("Object not found", exc.getMessage());
     }
@@ -36,7 +37,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse annotationValidationExc(final ItemNotAvailableException exc) {
+    public ErrorResponse bookingValidationExc(final ItemNotAvailableException exc) {
         log.error("400: " + exc.getMessage());
         return new ErrorResponse("Ошибка бронирования - данный предмет уже занят", exc.getMessage());
     }

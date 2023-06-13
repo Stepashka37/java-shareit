@@ -7,6 +7,8 @@ import ru.practicum.shareit.booking.BookingDtoForItemHost;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -31,12 +33,14 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository, CommentRepository commentRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository, CommentRepository commentRepository, ItemRequestRepository itemRequestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
 
@@ -44,8 +48,10 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto createItem(long userId, ItemDto itemDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
+        ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId()).orElse(null);
         Item itemToSave = dtoToModel(itemDto);
         itemToSave.setOwner(user);
+        itemToSave.setRequest(itemRequest);
         Item itemCreated = itemRepository.save(itemToSave);
         log.info("Создали предмет с id{}", itemCreated.getId());
         return modelToDto(itemCreated);
@@ -115,15 +121,28 @@ public class ItemServiceImpl implements ItemService {
         for (Item userItem : userItems) {
             ItemDtoWithBookingsAndComments dtoToReturn = modelToDtoWithBookings(userItem);
             List<Booking> itemBookings = bookingRepository.findAllBookingsByItemId(userItem.getId());
+            List<CommentDtoToReturn> itemComments = commentRepository.findAllByItem(userItem.getId())
+                    .stream()
+                    .map(x -> modelToDto(x))
+                    .collect(Collectors.toList());
+            dtoToReturn.setComments(itemComments);
             if (!itemBookings.isEmpty()) {
                 List<Booking> allBookings = itemBookings.stream().filter(x -> x.getEnd().isBefore(LocalDateTime.now())).collect(Collectors.toList());
-                BookingDtoForItemHost lastBooking = itemBookings.stream().filter(x -> x.getEnd().isBefore(LocalDateTime.now()))
-                        .findFirst().map(x -> modelToDtoForItem(x)).get();
+                /*BookingDtoForItemHost lastBooking = itemBookings.stream().filter(x -> x.getEnd().isBefore(LocalDateTime.now()))
+                        .findFirst().map(x -> modelToDtoForItem(x)).get();*/
+                BookingDtoForItemHost lastBooking = itemBookings.stream().filter(x -> x.getStart().isBefore(LocalDateTime.now()))
+                        .sorted(Comparator.comparing(Booking::getEnd).reversed())
+                        .findFirst().map(x -> modelToDtoForItem(x))
+                        .orElse(null);
 
+               /* BookingDtoForItemHost nextBooking = itemBookings.stream().filter(x -> x.getStart().isAfter(LocalDateTime.now()))
+                        .sorted(Comparator.comparing(Booking::getStart))
+                        .findFirst().map(x -> modelToDtoForItem(x)).get();*/
                 BookingDtoForItemHost nextBooking = itemBookings.stream().filter(x -> x.getStart().isAfter(LocalDateTime.now()))
                         .sorted(Comparator.comparing(Booking::getStart))
-                        .findFirst().map(x -> modelToDtoForItem(x)).get();
-                dtoToReturn.setLastBooking(modelToDtoForItem(allBookings.get(0)));
+                        .findFirst().map(x -> modelToDtoForItem(x))
+                        .orElse(null);
+                dtoToReturn.setLastBooking(lastBooking);
                 dtoToReturn.setNextBooking(nextBooking);
             }
             result.add(dtoToReturn);

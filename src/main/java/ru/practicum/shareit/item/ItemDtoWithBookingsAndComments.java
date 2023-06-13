@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -54,6 +55,19 @@ public class ItemDtoWithBookingsAndComments {
     private BookingDtoForItemHost nextBooking;
 
     private List<CommentDtoToReturn> comments;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemDtoWithBookingsAndComments that = (ItemDtoWithBookingsAndComments) o;
+        return id == that.id && name.equals(that.name) && description.equals(that.description) && available.equals(that.available) && Objects.equals(lastBooking, that.lastBooking) && Objects.equals(nextBooking, that.nextBooking) && Objects.equals(comments, that.comments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, available, lastBooking, nextBooking, comments);
+    }
 
     public static class ItemDtoWithBookingsAndCommentsBuilder {
         private long id;

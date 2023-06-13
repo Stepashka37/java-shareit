@@ -6,6 +6,7 @@ import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -51,6 +52,19 @@ public class Comment {
         this.text = text;
         this.item = item;
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Comment comment = (Comment) o;
+        return id == comment.id && text.equals(comment.text) && item.equals(comment.item) && user.equals(comment.user) && created.equals(comment.created);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, text, item, user, created);
     }
 
     public static CommentBuilder builder() {

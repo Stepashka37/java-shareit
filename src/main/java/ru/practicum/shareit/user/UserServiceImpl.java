@@ -1,6 +1,7 @@
 package ru.practicum.shareit.user;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.UserNotFoundException;
 
@@ -16,6 +17,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -38,7 +40,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createNewUser(UserDto userDto) {
-        User userCreated = userRepository.save(dtoToModel(userDto));
+        User userToSave = dtoToModel(userDto);
+        User userCreated = userRepository.save(userToSave);
         log.info("Создали пользователя с id{}", userCreated.getId());
         return modelToDto(userCreated);
     }
