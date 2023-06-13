@@ -1,6 +1,10 @@
 package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingDtoForItemHost;
@@ -113,10 +117,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDtoWithBookingsAndComments> getOwnerItems(long userId) {
+    public List<ItemDtoWithBookingsAndComments> getOwnerItems(long userId, Integer from, Integer size) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        List<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
+        int page = (from/size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId, pageable);
         List<ItemDtoWithBookingsAndComments> result = new ArrayList<>();
         for (Item userItem : userItems) {
             ItemDtoWithBookingsAndComments dtoToReturn = modelToDtoWithBookings(userItem);
@@ -153,15 +159,18 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchAvailableItems(long userId, String text) {
+    public List<ItemDto> searchAvailableItems(long userId, String text, Integer from, Integer size) {
         if (text.isBlank()) return new ArrayList<ItemDto>();
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        List<Item> availableItems = itemRepository.findAllByText(text.toLowerCase());
-        log.info("Получили все доступные предметы по фразе ", text);
-        return availableItems.stream()
+        int page = (from/size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        List<ItemDto> availableItems = itemRepository.findAllByText(text.toLowerCase(), pageable)
+                .stream()
                 .map(x -> modelToDto(x))
                 .collect(Collectors.toList());
+        log.info("Получили все доступные предметы по фразе ", text);
+        return availableItems;
     }
 
     @Override

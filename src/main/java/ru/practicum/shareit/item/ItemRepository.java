@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,14 +11,14 @@ import java.util.List;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    List<Item> findAllByOwnerIdOrderByIdAsc(long userId);
+    Page<Item> findAllByOwnerIdOrderByIdAsc(long userId, Pageable pageable);
 
     @Query("select it " +
             "from Item as it " +
             "where ((lower(it.name) like %:text% " +
             "or lower(it.description) like %:text%)" +
             "and it.isAvailable is true) ")
-    List<Item> findAllByText(@Param("text") String text);
+    Page<Item> findAllByText(@Param("text") String text, Pageable pageable);
 
     List<Item> findAllByRequestId(long requestId);
 

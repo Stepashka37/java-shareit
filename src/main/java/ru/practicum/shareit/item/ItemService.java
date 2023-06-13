@@ -10,9 +10,9 @@ public interface ItemService {
 
     ItemDtoWithBookingsAndComments getItemById(long userId, long itemId);
 
-    List<ItemDtoWithBookingsAndComments> getOwnerItems(long userId);
+    List<ItemDtoWithBookingsAndComments> getOwnerItems(long userId, Integer from, Integer size);
 
-    List<ItemDto> searchAvailableItems(long userId, String text);
+    List<ItemDto> searchAvailableItems(long userId, String text, Integer from, Integer size);
 
     CommentDtoToReturn addComment(long userId, long itemId, CommentDtoToCreate dtoToCreate);
 
