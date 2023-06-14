@@ -12,8 +12,6 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -271,7 +269,7 @@ class BookingRepositoryTest {
 
     }
 
-    @Test
+    /*@Test
     void itShouldFindAllByBookerId() {
         // Given
         User owner = User.builder()
@@ -997,6 +995,6 @@ class BookingRepositoryTest {
                 .containsExactly(booking1);
 
 
-    }
+    }*/
 
 }

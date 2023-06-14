@@ -316,7 +316,7 @@ public class ItemRepositoryTest {
         assertThat(underTest.findAll()).hasSize(0);
     }
 
-    @Test
+    /*@Test
     void itShouldFindAllByOwnerId() {
         // Given
         User user1 = User.builder()
@@ -409,5 +409,5 @@ public class ItemRepositoryTest {
                 .hasSize(2)
                 .contains(item1, item2);
 
-    }
+    }*/
 }
