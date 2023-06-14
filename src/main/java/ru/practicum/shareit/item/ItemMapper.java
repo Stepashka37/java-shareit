@@ -38,7 +38,7 @@ public class ItemMapper {
 
     }
 
-    public static ItemShortForRequest modelToShortDto(Item item){
+    public static ItemShortForRequest modelToShortDto(Item item) {
         return ItemShortForRequest.builder()
                 .id(item.getId())
                 .name(item.getName())

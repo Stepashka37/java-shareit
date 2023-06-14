@@ -120,7 +120,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDtoWithBookingsAndComments> getOwnerItems(long userId, Integer from, Integer size) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        int page = (from/size);
+        int page = from / size;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
         Page<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId, pageable);
         List<ItemDtoWithBookingsAndComments> result = new ArrayList<>();
@@ -163,7 +163,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) return new ArrayList<ItemDto>();
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        int page = (from/size);
+        int page = from / size;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
         List<ItemDto> availableItems = itemRepository.findAllByText(text.toLowerCase(), pageable)
                 .stream()

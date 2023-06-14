@@ -23,7 +23,7 @@ import static ru.practicum.shareit.request.RequestMapper.modelToDto;
 
 @Service
 @Slf4j
-public class ItemRequestServiceImpl implements ItemRequestService{
+public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final ItemRequestRepository itemRequestRepository;
     private final ItemRepository itemRepository;
@@ -61,7 +61,6 @@ public class ItemRequestServiceImpl implements ItemRequestService{
         List<Long> requestIds = itemRequests.stream()
                 .map(x -> x.getId())
                         .collect(Collectors.toList());
-         //List<ItemShortForRequest> items = itemRepository.findAllByRequestId()
         log.info("Получили список всех запросов пользователя с id{}", userId);
         return itemRequests;
 
@@ -71,11 +70,11 @@ public class ItemRequestServiceImpl implements ItemRequestService{
     public List<ItemRequestDto> getOtherUsersRequests(long userId, int from, int size) {
         User userFound = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        int page = from/size;
+        int page = from / size;
         Pageable pageable = PageRequest.of(page, size, Sort.by("created").ascending());
         Page<ItemRequest> pagedResult = itemRequestRepository.findAllUserRequest(userId, pageable);
         List<ItemRequestDto> usersRequests = new ArrayList<>();
-        if(pagedResult.hasContent()) {
+        if (pagedResult.hasContent()) {
            usersRequests =  pagedResult.stream()
                     .map(x -> modelToDto(x))
                    .peek(t -> t.setItems(itemRepository.findAllByRequestId(t.getId())
