@@ -7,8 +7,24 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
+
+    @Query("select b from Booking as b " +
+            "join b.item as i " +
+            "where i.id = ?1 and " +
+            "b.status = 'APPROVED'")
+    List<Booking> findAllBookingsByItemId(long itemId);
+
+    @Query("select b from Booking as b " +
+            "join b.item as i " +
+            "join b.booker as u " +
+            "where i.id = ?1 " +
+            "and u.id = ?2 " +
+            "and b.end < ?3 ")
+    List<Booking> findAllByBookerIdAndItemIdAndEndBefore(long itemId, long bookerId,  LocalDateTime end);
 
     Page<Booking> findAllByBookerIdOrderByStartDesc(long bookerId, Pageable pageable);
 
