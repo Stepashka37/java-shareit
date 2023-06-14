@@ -68,7 +68,7 @@ class UserServiceImplTest {
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessageContaining("User not found");
     }
-    
+
     @Test
     void itShouldGetAllUsers() {
         // Given
