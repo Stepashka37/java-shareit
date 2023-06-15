@@ -57,6 +57,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto approveBooking(long userId, long bookingId, boolean approved) {
+        User userFromDb = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
         if ((booking.getStatus() == BookingStatus.APPROVED && approved == true)
@@ -88,7 +90,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
 
         if (booking.getBooker().getId() != userId && booking.getItem().getOwner().getId() != userId) {
-            throw new UserNotFoundException("Data is available for booking author or " +
+            throw new UserNotFoundException("Data is available for booker or " +
                     "for item owner");
         }
         log.info("Пользователь с id{} получил данные бронирования с id{}", userId, bookingId);
@@ -130,7 +132,6 @@ public class BookingServiceImpl implements BookingService {
             default:
                 throw new StateValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
-        System.out.println(result);
         log.info("Получили все бронирования пользователя с id{}", userId);
         return result.stream()
                 .map(x -> modelToDto(x))

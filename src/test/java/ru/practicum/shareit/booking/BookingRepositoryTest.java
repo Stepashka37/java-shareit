@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.Item;
@@ -269,7 +271,7 @@ class BookingRepositoryTest {
 
     }
 
-    /*@Test
+    @Test
     void itShouldFindAllByBookerId() {
         // Given
         User owner = User.builder()
@@ -327,7 +329,8 @@ class BookingRepositoryTest {
         underTest.save(booking1);
         underTest.save(booking2);
         // Then
-        assertThat(underTest.findAllByBookerIdOrderByStartDesc(booker.getId()))
+        Pageable pageable = PageRequest.of(0, 2);
+        assertThat(underTest.findAllByBookerIdOrderByStartDesc(booker.getId(), pageable))
                 .hasSize(2)
                 .containsExactly(booking2, booking1);
 
@@ -391,7 +394,8 @@ class BookingRepositoryTest {
         underTest.save(booking1);
         underTest.save(booking2);
         // Then
-        assertThat(underTest.findAllCurrentBookingsByUser(booker.getId(), LocalDateTime.now()))
+        Pageable pageable = PageRequest.of(0, 1);
+        assertThat(underTest.findAllCurrentBookingsByUser(booker.getId(), LocalDateTime.now(), pageable))
                 .hasSize(1)
                 .containsExactly(booking1);
 
@@ -455,7 +459,8 @@ class BookingRepositoryTest {
         underTest.save(booking1);
         underTest.save(booking2);
         // Then
-        assertThat(underTest.findAllFutureBookingsByUser(booker.getId(), LocalDateTime.now()))
+        Pageable pageable = PageRequest.of(0, 1);
+        assertThat(underTest.findAllFutureBookingsByUser(booker.getId(), LocalDateTime.now(), pageable))
                 .hasSize(1)
                 .containsExactly(booking2);
 
@@ -519,7 +524,8 @@ class BookingRepositoryTest {
         underTest.save(booking1);
         underTest.save(booking2);
         // Then
-        assertThat(underTest.findAllPastBookingsByUser(booker.getId(), LocalDateTime.now()))
+        Pageable pageable = PageRequest.of(0, 1);
+        assertThat(underTest.findAllPastBookingsByUser(booker.getId(), LocalDateTime.now(), pageable))
                 .hasSize(1)
                 .containsExactly(booking1);
 
@@ -583,11 +589,12 @@ class BookingRepositoryTest {
         underTest.save(booking1);
         underTest.save(booking2);
         // Then
-        assertThat(underTest.findAllRejectedBookingsByUser(booker.getId()))
+        Pageable pageable = PageRequest.of(0, 1);
+        assertThat(underTest.findAllRejectedBookingsByUser(booker.getId(), pageable))
                 .hasSize(1)
                 .containsExactly(booking2);
 
-        assertThat(underTest.findAllWaitingBookingsByUser(booker.getId()))
+        assertThat(underTest.findAllWaitingBookingsByUser(booker.getId(), pageable))
                 .hasSize(1)
                 .containsExactly(booking1);
 
@@ -652,14 +659,13 @@ class BookingRepositoryTest {
         // When
         underTest.save(booking1);
         underTest.save(booking2);
-        List<Long> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(owner.getId())
-                .stream()
-                .map(x -> x.getId())
-                .collect(Collectors.toList());
+
+
         // Then
-        assertThat(underTest.findAllItemsBookings(userItems))
+        Pageable pageable = PageRequest.of(0, 2);
+        assertThat(underTest.findAllItemsBookings(owner.getId(), pageable ))
                 .hasSize(2)
-                .contains(booking2, booking1);
+                .contains(booking1, booking2);
 
     }
 
@@ -722,12 +728,9 @@ class BookingRepositoryTest {
         // When
         underTest.save(booking1);
         underTest.save(booking2);
-        List<Long> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(owner.getId())
-                .stream()
-                .map(x -> x.getId())
-                .collect(Collectors.toList());
         // Then
-        assertThat(underTest.findAllItemsCurrentBookings(userItems, LocalDateTime.now()))
+        Pageable pageable = PageRequest.of(0, 1);
+        assertThat(underTest.findAllItemsCurrentBookings(owner.getId(), LocalDateTime.now(), pageable))
                 .hasSize(1)
                 .contains(booking1);
 
@@ -792,16 +795,13 @@ class BookingRepositoryTest {
         // When
         underTest.save(booking1);
         underTest.save(booking2);
-        List<Long> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(owner.getId())
-                .stream()
-                .map(x -> x.getId())
-                .collect(Collectors.toList());
         // Then
-        assertThat(underTest.findAllItemsPastBookings(userItems, LocalDateTime.now()))
+        Pageable pageable = PageRequest.of(0, 1);
+        assertThat(underTest.findAllItemsPastBookings(owner.getId(), LocalDateTime.now(), pageable))
                 .hasSize(1)
                 .contains(booking1);
 
-        assertThat(underTest.findAllItemsFutureBookings(userItems, LocalDateTime.now()))
+        assertThat(underTest.findAllItemsFutureBookings(owner.getId(), LocalDateTime.now(), pageable))
                 .hasSize(1)
                 .contains(booking2);
     }
@@ -865,16 +865,14 @@ class BookingRepositoryTest {
         // When
         underTest.save(booking1);
         underTest.save(booking2);
-        List<Long> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(owner.getId())
-                .stream()
-                .map(x -> x.getId())
-                .collect(Collectors.toList());
+
         // Then
-        assertThat(underTest.findAllItemsRejectedBookings(userItems))
+        Pageable pageable = PageRequest.of(0, 1);
+        assertThat(underTest.findAllItemsRejectedBookings(owner.getId(), pageable))
                 .hasSize(1)
                 .contains(booking2);
 
-        assertThat(underTest.findAllItemsWaitingBookings(userItems))
+        assertThat(underTest.findAllItemsWaitingBookings(owner.getId(), pageable))
                 .hasSize(1)
                 .contains(booking1);
     }
@@ -933,7 +931,7 @@ class BookingRepositoryTest {
         // Then
         assertThat(underTest.findAllBookingsByItemId(item.getId()))
                 .hasSize(2)
-                .containsExactly(booking2, booking1);
+                .containsExactly(booking1, booking2);
 
 
     }
@@ -995,6 +993,6 @@ class BookingRepositoryTest {
                 .containsExactly(booking1);
 
 
-    }*/
+    }
 
 }
