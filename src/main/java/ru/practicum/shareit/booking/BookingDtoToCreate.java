@@ -58,8 +58,13 @@ public class BookingDtoToCreate {
             return new BookingDtoToCreate(start, end, itemId);
         }
 
+        @Override
         public String toString() {
-            return "BookingDtoToCreate.BookingDtoToCreateBuilder(start=" + this.start + ", end=" + this.end + ", itemId=" + this.itemId + ")";
+            return "BookingDtoToCreateBuilder{" +
+                    "start=" + start +
+                    ", end=" + end +
+                    ", itemId=" + itemId +
+                    '}';
         }
     }
 }

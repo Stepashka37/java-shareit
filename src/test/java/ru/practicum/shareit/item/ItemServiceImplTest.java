@@ -113,14 +113,6 @@ class ItemServiceImplTest {
                 .email("Useremail@yandex.ru")
                 .build();
 
-        Item itemToBeSaved = Item.builder()
-                .id(1L)
-                .name("Item1")
-                .description("Item1 Description")
-                .isAvailable(true)
-                .owner(itemOwner)
-                .build();
-
         doThrow(new UserNotFoundException("User not found")).when(userRepository).findById(1L);
 
         //When
