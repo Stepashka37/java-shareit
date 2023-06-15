@@ -145,7 +145,7 @@ public class BookingServiceImpl implements BookingService {
         int page = from / size;
         State state;
         try {
-             state = State.valueOf(stateAsString);
+            state = State.valueOf(stateAsString);
         } catch (Exception e) {
             throw new StateValidationException("Unknown state: UNSUPPORTED_STATUS");
         }

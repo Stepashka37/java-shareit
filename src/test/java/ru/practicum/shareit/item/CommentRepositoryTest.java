@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 @ActiveProfiles(profiles = {"ci,test"})
 @DataJpaTest(
         properties = {
@@ -209,7 +210,6 @@ class CommentRepositoryTest {
                 .build();
 
 
-
         Item item = Item.builder()
                 .name("Item1")
                 .description("Item1 description")
@@ -231,7 +231,6 @@ class CommentRepositoryTest {
                 .user(user2)
                 .created(LocalDateTime.now())
                 .build();
-
 
 
         userRepository.save(user1);

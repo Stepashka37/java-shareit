@@ -24,7 +24,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "where i.id = ?1 " +
             "and u.id = ?2 " +
             "and b.end < ?3 ")
-    List<Booking> findAllByBookerIdAndItemIdAndEndBefore(long itemId, long bookerId,  LocalDateTime end);
+    List<Booking> findAllByBookerIdAndItemIdAndEndBefore(long itemId, long bookerId, LocalDateTime end);
 
     Page<Booking> findAllByBookerIdOrderByStartDesc(long bookerId, Pageable pageable);
 

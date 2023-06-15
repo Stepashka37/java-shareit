@@ -41,8 +41,8 @@ public class BookingController {
     @GetMapping
     public List<BookingDto> getUserBookings(@RequestHeader("X-Sharer-User-id") long userId,
                                             @Nullable @RequestParam(value = "state", defaultValue = "ALL") String state,
-                                            @RequestParam (value = "from", defaultValue = "0") @Min(0)  Integer from,
-                                            @RequestParam (value = "size", defaultValue = "10") @Min(1)  Integer size) {
+                                            @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+                                            @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
         List<BookingDto> result = bookingService.getUserBookings(userId, state, from, size);
         return result;
     }
@@ -50,8 +50,8 @@ public class BookingController {
     @GetMapping("/owner")
     public List<BookingDto> getAllUserItemsBookings(@RequestHeader("X-Sharer-User-id") long userId,
                                                     @Nullable @RequestParam(value = "state", defaultValue = "ALL") String state,
-                                                    @RequestParam (value = "from", defaultValue = "0") @Min(0)  Integer from,
-                                                    @RequestParam (value = "size", defaultValue = "10") @Min(1)  Integer size) {
+                                                    @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+                                                    @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
         List<BookingDto> result = bookingService.getAllUserItemsBookings(userId, state, from, size);
         return result;
     }
