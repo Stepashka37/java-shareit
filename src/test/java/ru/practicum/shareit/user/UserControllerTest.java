@@ -25,7 +25,7 @@ class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    
+
     @MockBean
     private UserService userService;
 
@@ -165,7 +165,7 @@ class UserControllerTest {
         // When
         // Then
         mockMvc.perform(delete("/users/1"))
-            .andExpect(status().isOk());
+                .andExpect(status().isOk());
     }
 
     @SneakyThrows

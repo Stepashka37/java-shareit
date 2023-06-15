@@ -38,7 +38,7 @@ class BookingControllerTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         mapper.registerModule(new JavaTimeModule());
     }
