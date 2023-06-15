@@ -44,10 +44,12 @@ public class ErrorHandler {
 
     @ExceptionHandler(StateValidationException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse anyOtherExc(final StateValidationException exc) {
+    public ErrorResponse unsupportedStatusExc(final StateValidationException exc) {
         log.error("500: " + exc.getMessage());
         return new ErrorResponse("Unknown state: UNSUPPORTED_STATUS", exc.getMessage());
     }
+
+
 
 
 }

@@ -173,6 +173,49 @@ class ItemServiceImplTest {
     }
 
     @Test
+    void itShouldNotUpdateItemWhenUserDoesNotExist() {
+        // Given
+        ItemDto itemToUpdate = ItemDto.builder()
+                .id(1L)
+                .name("Item1UPD")
+                .description("Item1UPD Description")
+                .available(false)
+                .build();
+
+        User itemOwner = User.builder()
+                .id(1L)
+                .name("User1")
+                .email("Useremail@yandex.ru")
+                .build();
+
+        Item itemToBeUpdated = Item.builder()
+                .id(1L)
+                .name("Item1")
+                .description("Item1 Description")
+                .isAvailable(true)
+                .owner(itemOwner)
+                .build();
+
+        Item itemUpdated = Item.builder()
+                .id(1L)
+                .name("Item1UPD")
+                .description("Item1UPD Description")
+                .isAvailable(false)
+                .owner(itemOwner)
+                .build();
+
+        doThrow(new UserNotFoundException("User not found")).when(userRepository).findById(1L);
+
+
+        // When
+        // Then
+        assertThatThrownBy(() -> underTest.updateItem(1L, itemToUpdate))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessageContaining("User not found");
+        verify(itemRepository, times(0)).save(any());
+    }
+
+    @Test
     void itShouldNotUpdateItemWhenItemDoesNotExist() {
         // Given
         ItemDto itemToUpdate = ItemDto.builder()
@@ -294,6 +337,155 @@ class ItemServiceImplTest {
                 .contains(modelToDto(comment1),modelToDto(comment2));
         assertThat(itemFound.getLastBooking().getId()).isEqualTo(booking1.getId());
         assertThat(itemFound.getNextBooking().getId()).isEqualTo(booking2.getId());
+
+    }
+
+
+    @Test
+    void itShouldNotGetItemIfUserDoesNotExist() {
+        // Given
+
+        User itemOwner = User.builder()
+                .id(1L)
+                .name("User1")
+                .email("Useremail@yandex.ru")
+                .build();
+
+        User commentator1 = User.builder()
+                .id(2L)
+                .name("User2")
+                .email("Useremail1@yandex.ru")
+                .build();
+
+        User commentator2 = User.builder()
+                .id(3L)
+                .name("User3")
+                .email("Useremail2@yandex.ru")
+                .build();
+
+        Item itemToReturn = Item.builder()
+                .id(1L)
+                .name("Item1")
+                .description("Item1 Description")
+                .isAvailable(true)
+                .owner(itemOwner)
+                .build();
+
+        Comment comment1 = Comment.builder()
+                .id(1L)
+                .item(itemToReturn)
+                .user(commentator1)
+                .text("Comment1 text")
+                .created(LocalDateTime.now().minusMinutes(10))
+                .build();
+
+        Comment comment2 = Comment.builder()
+                .id(2L)
+                .item(itemToReturn)
+                .user(commentator2)
+                .text("Comment2 text")
+                .created(LocalDateTime.now().minusMinutes(5))
+                .build();
+
+        Booking booking1 = Booking.builder()
+                .id(1L)
+                .item(itemToReturn)
+                .booker(commentator1)
+                .status(BookingStatus.APPROVED)
+                .start(LocalDateTime.now().minusMinutes(30))
+                .end(LocalDateTime.now().minusMinutes(10))
+                .build();
+
+        Booking booking2 = Booking.builder()
+                .id(2L)
+                .item(itemToReturn)
+                .booker(commentator2)
+                .status(BookingStatus.APPROVED)
+                .start(LocalDateTime.now().plusMinutes(10))
+                .end(LocalDateTime.now().plusMinutes(15))
+                .build();
+
+       doThrow(new UserNotFoundException("User not found")).when(userRepository).findById(1L);
+
+        // When
+        // Then
+        assertThatThrownBy(() ->underTest.getItemById(1L, 1L))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessageContaining("User not found");
+
+    }
+
+    @Test
+    void itShouldNotGetItemIfItemDoesNotExist() {
+        // Given
+
+        User itemOwner = User.builder()
+                .id(1L)
+                .name("User1")
+                .email("Useremail@yandex.ru")
+                .build();
+
+        User commentator1 = User.builder()
+                .id(2L)
+                .name("User2")
+                .email("Useremail1@yandex.ru")
+                .build();
+
+        User commentator2 = User.builder()
+                .id(3L)
+                .name("User3")
+                .email("Useremail2@yandex.ru")
+                .build();
+
+        Item itemToReturn = Item.builder()
+                .id(1L)
+                .name("Item1")
+                .description("Item1 Description")
+                .isAvailable(true)
+                .owner(itemOwner)
+                .build();
+
+        Comment comment1 = Comment.builder()
+                .id(1L)
+                .item(itemToReturn)
+                .user(commentator1)
+                .text("Comment1 text")
+                .created(LocalDateTime.now().minusMinutes(10))
+                .build();
+
+        Comment comment2 = Comment.builder()
+                .id(2L)
+                .item(itemToReturn)
+                .user(commentator2)
+                .text("Comment2 text")
+                .created(LocalDateTime.now().minusMinutes(5))
+                .build();
+
+        Booking booking1 = Booking.builder()
+                .id(1L)
+                .item(itemToReturn)
+                .booker(commentator1)
+                .status(BookingStatus.APPROVED)
+                .start(LocalDateTime.now().minusMinutes(30))
+                .end(LocalDateTime.now().minusMinutes(10))
+                .build();
+
+        Booking booking2 = Booking.builder()
+                .id(2L)
+                .item(itemToReturn)
+                .booker(commentator2)
+                .status(BookingStatus.APPROVED)
+                .start(LocalDateTime.now().plusMinutes(10))
+                .end(LocalDateTime.now().plusMinutes(15))
+                .build();
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(itemOwner));
+        doThrow(new ItemNotFoundException("Item not found")).when(itemRepository).findById(1L);
+        // When
+        // Then
+        assertThatThrownBy(() ->underTest.getItemById(1L, 1L))
+                .isInstanceOf(ItemNotFoundException.class)
+                .hasMessageContaining("Item not found");
 
     }
 
@@ -459,10 +651,85 @@ class ItemServiceImplTest {
         assertThat(ownerItems.get(0).getLastBooking().getId()).isEqualTo(booking1.getId());
 
         assertThat(ownerItems.get(1).getNextBooking().getId()).isEqualTo(booking2.getId());
+    }
 
+    @Test
+    void itShouldNotGetOwnerItemsWhenUserDoesNotExist() {
+        // Given
+        User itemOwner = User.builder()
+                .id(1L)
+                .name("User1")
+                .email("Useremail@yandex.ru")
+                .build();
+
+        User commentator1 = User.builder()
+                .id(2L)
+                .name("User2")
+                .email("Useremail1@yandex.ru")
+                .build();
+
+        User commentator2 = User.builder()
+                .id(3L)
+                .name("User3")
+                .email("Useremail2@yandex.ru")
+                .build();
+
+        Item itemToReturn1 = Item.builder()
+                .id(1L)
+                .name("Item1")
+                .description("Item1 Description")
+                .isAvailable(true)
+                .owner(itemOwner)
+                .build();
+
+        Item itemToReturn2 = Item.builder()
+                .id(2L)
+                .name("Item2")
+                .description("Item2 Description")
+                .isAvailable(true)
+                .owner(itemOwner)
+                .build();
+
+        Comment comment1 = Comment.builder()
+                .id(1L)
+                .item(itemToReturn1)
+                .user(commentator1)
+                .text("Comment1 text")
+                .created(LocalDateTime.now().minusMinutes(10))
+                .build();
+
+        Comment comment2 = Comment.builder()
+                .id(2L)
+                .item(itemToReturn2)
+                .user(commentator2)
+                .text("Comment2 text")
+                .created(LocalDateTime.now().minusMinutes(5))
+                .build();
+
+        Booking booking1 = Booking.builder()
+                .id(1L)
+                .item(itemToReturn1)
+                .booker(commentator1)
+                .status(BookingStatus.APPROVED)
+                .start(LocalDateTime.now().minusMinutes(30))
+                .end(LocalDateTime.now().minusMinutes(10))
+                .build();
+
+        Booking booking2 = Booking.builder()
+                .id(2L)
+                .item(itemToReturn2)
+                .booker(commentator2)
+                .status(BookingStatus.APPROVED)
+                .start(LocalDateTime.now().plusMinutes(10))
+                .end(LocalDateTime.now().plusMinutes(15))
+                .build();
+
+        doThrow(new UserNotFoundException("User not found")).when(userRepository).findById(1L);
         // When
         // Then
-
+        assertThatThrownBy(() ->underTest.getOwnerItems(1L, 0, 1))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessageContaining("User not found");
     }
 
     @Test

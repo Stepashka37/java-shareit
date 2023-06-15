@@ -156,6 +156,54 @@ class UserServiceImplTest {
     }
 
     @Test
+    void itShouldNotUpdateIfUserDoesNotExist() {
+        // Given
+        User userToSave = User.builder()
+                .id(1L)
+                .name("Username")
+                .email("Useremail@yandex.ru")
+                .build();
+
+        UserDto userDto = UserDto.builder()
+                .id(1L)
+                .name("Username")
+                .email("Useremail@yandex.ru")
+                .build();
+        // When
+        doThrow(new UserNotFoundException("User not found")).when(userRepository).findById(1L);
+
+        // Then
+
+        assertThatThrownBy(() -> underTest.updateUser(1L, userDto))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessageContaining("User not found");
+    }
+
+    @Test
+    void itShouldNotUpdateIfNameIsBlank() {
+        // Given
+        User userFromDb = User.builder()
+                .id(1L)
+                .name("Username")
+                .email("Useremail@yandex.ru")
+                .build();
+
+        UserDto userDto = UserDto.builder()
+                .id(1L)
+                .name(null)
+                .email("UseremailUPD@yandex.ru")
+                .build();
+        // When
+        when(userRepository.findById(1L)).thenReturn(Optional.of(userFromDb));
+        when(userRepository.save(userFromDb)).thenReturn(userFromDb);
+        // Then
+        UserDto userUpdated = underTest.updateUser(1L, userDto);
+       assertThat(userUpdated.getName()).isEqualTo("Username");
+       assertThat(userUpdated.getEmail()).isEqualTo("UseremailUPD@yandex.ru");
+    }
+
+
+    @Test
     void itShouldCreateNewUser() {
         // Given
         UserDto userToSave = UserDto.builder()
