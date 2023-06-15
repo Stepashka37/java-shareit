@@ -72,12 +72,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         Page<ItemRequest> pagedResult = itemRequestRepository.findAllUserRequest(userId, pageable);
         List<ItemRequestDto> usersRequests = new ArrayList<>();
         if (pagedResult.hasContent()) {
-           usersRequests =  pagedResult.stream()
+            usersRequests = pagedResult.stream()
                     .map(x -> modelToDto(x))
-                   .peek(t -> t.setItems(itemRepository.findAllByRequestId(t.getId())
-                           .stream()
-                           .map(y -> modelToDto(y))
-                           .collect(Collectors.toList())))
+                    .peek(t -> t.setItems(itemRepository.findAllByRequestId(t.getId())
+                            .stream()
+                            .map(y -> modelToDto(y))
+                            .collect(Collectors.toList())))
                     .collect(Collectors.toList());
         }
         log.info("Получили список всех запросов пользователей начиная со страницы {page}", page);
@@ -91,9 +91,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)
                 .orElseThrow(() -> new RequestNotFound("Request not found"));
         List<ItemDto> items = itemRepository.findAllByRequestId(itemRequest.getId())
-                        .stream()
-                        .map(x -> modelToDto(x))
-                        .collect(Collectors.toList());
+                .stream()
+                .map(x -> modelToDto(x))
+                .collect(Collectors.toList());
         ItemRequestDto result = modelToDto(itemRequest);
         result.setItems(items);
         log.info("Получили данные о запросе с id{}", requestId);

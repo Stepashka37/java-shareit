@@ -38,15 +38,15 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDtoWithBookingsAndComments> getOwnerItems(@RequestHeader("X-Sharer-User-id") long userId,
-                                                              @RequestParam (value = "from", defaultValue = "0") @Min(0)  Integer from,
-                                                              @RequestParam (value = "size", defaultValue = "10") @Min(1)  Integer size) {
+                                                              @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+                                                              @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
         return itemService.getOwnerItems(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchAvailableItems(@RequestHeader("X-Sharer-User-id") long userId, @RequestParam String text,
-                                              @RequestParam (value = "from", defaultValue = "0") @Min(0)  Integer from,
-                                              @RequestParam (value = "size", defaultValue = "10") @Min(1)  Integer size) {
+                                              @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+                                              @RequestParam(value = "size", defaultValue = "10") @Min(1) Integer size) {
         return itemService.searchAvailableItems(userId, text, from, size);
     }
 

@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 @ActiveProfiles(profiles = {"ci,test"})
 @DataJpaTest(
         properties = {
@@ -74,7 +75,7 @@ class ItemRequestRepositoryTest {
         // Then
         assertThat(itemRequests)
                 .hasSize(2)
-                    .containsExactly(itemRequest1, itemRequest2);
+                .containsExactly(itemRequest1, itemRequest2);
     }
 
     @Test

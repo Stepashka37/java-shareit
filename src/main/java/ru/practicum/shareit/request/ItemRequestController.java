@@ -20,7 +20,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto createRequest(@RequestHeader("X-Sharer-User-id") long userId,
-                                        @Validated @RequestBody  ItemRequestDtoToCreate itemRequestDtoToCreate) {
+                                        @Validated @RequestBody ItemRequestDtoToCreate itemRequestDtoToCreate) {
         return itemRequestService.createRequest(userId, itemRequestDtoToCreate);
     }
 
@@ -31,9 +31,9 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDto> getOtherUsersRequests(@RequestHeader("X-Sharer-User-id") long userId,
-                                                      @RequestParam (value = "from", defaultValue = "0") @Min(0)  Integer from,
-                                                      @RequestParam (value = "size", defaultValue = "1") @Min(1)  Integer size) {
-       return itemRequestService.getOtherUsersRequests(userId, from, size);
+                                                      @RequestParam(value = "from", defaultValue = "0") @Min(0) Integer from,
+                                                      @RequestParam(value = "size", defaultValue = "1") @Min(1) Integer size) {
+        return itemRequestService.getOtherUsersRequests(userId, from, size);
     }
 
     @GetMapping("/{requestId}")
