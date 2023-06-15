@@ -58,6 +58,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                         .map(y -> modelToDto(y))
                         .collect(Collectors.toList())))
                 .collect(Collectors.toList());
+        List<Long> requestIds = itemRequests.stream()
+                .map(x -> x.getId())
+                        .collect(Collectors.toList());
         log.info("Получили список всех запросов пользователя с id{}", userId);
         return itemRequests;
 
