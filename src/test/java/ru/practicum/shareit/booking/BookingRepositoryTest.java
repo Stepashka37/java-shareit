@@ -663,7 +663,7 @@ class BookingRepositoryTest {
 
         // Then
         Pageable pageable = PageRequest.of(0, 2);
-        assertThat(underTest.findAllItemsBookings(owner.getId(), pageable ))
+        assertThat(underTest.findAllItemsBookings(owner.getId(), pageable))
                 .hasSize(2)
                 .contains(booking1, booking2);
 
