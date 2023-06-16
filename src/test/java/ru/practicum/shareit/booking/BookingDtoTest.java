@@ -34,14 +34,14 @@ class BookingDtoTest {
                 .isAvailable(true)
                 .build();
 
-    BookingDto bookingDto = BookingDto.builder()
-            .id(1L)
-            .booker(user)
-            .item(item)
-            .start(LocalDateTime.of(2023,01,01,10,00,00))
-            .end(LocalDateTime.of(2023,01,01,11,00,00))
-            .status(BookingStatus.APPROVED)
-            .build();
+        BookingDto bookingDto = BookingDto.builder()
+                .id(1L)
+                .booker(user)
+                .item(item)
+                .start(LocalDateTime.of(2023, 01, 01, 10, 00, 00))
+                .end(LocalDateTime.of(2023, 01, 01, 11, 00, 00))
+                .status(BookingStatus.APPROVED)
+                .build();
 
         JsonContent<BookingDto> result = json.write(bookingDto);
 

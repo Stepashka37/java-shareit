@@ -198,8 +198,8 @@ class UserServiceImplTest {
         when(userRepository.save(userFromDb)).thenReturn(userFromDb);
         // Then
         UserDto userUpdated = underTest.updateUser(1L, userDto);
-       assertThat(userUpdated.getName()).isEqualTo("Username");
-       assertThat(userUpdated.getEmail()).isEqualTo("UseremailUPD@yandex.ru");
+        assertThat(userUpdated.getName()).isEqualTo("Username");
+        assertThat(userUpdated.getEmail()).isEqualTo("UseremailUPD@yandex.ru");
     }
 
 

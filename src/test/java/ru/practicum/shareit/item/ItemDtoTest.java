@@ -16,12 +16,12 @@ class ItemDtoTest {
 
     @Test
     void testItemDto() throws Exception {
-       ItemDto itemDto = ItemDto.builder()
-               .id(1L)
-               .name("item")
-               .description("item description")
-               .available(true)
-               .build();
+        ItemDto itemDto = ItemDto.builder()
+                .id(1L)
+                .name("item")
+                .description("item description")
+                .available(true)
+                .build();
 
         JsonContent<ItemDto> result = json.write(itemDto);
 

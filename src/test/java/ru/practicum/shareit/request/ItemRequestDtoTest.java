@@ -23,7 +23,7 @@ class ItemRequestDtoTest {
         ItemRequestDto itemRequestDto = ItemRequestDto.builder()
                 .id(1L)
                 .description("description")
-                .created(LocalDateTime.of(2023, 01, 01, 10,00))
+                .created(LocalDateTime.of(2023, 01, 01, 10, 00))
                 .items(List.of(new ItemDto(), new ItemDto()))
                 .build();
 

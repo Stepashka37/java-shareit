@@ -23,29 +23,29 @@ class ItemDtoWithBookingsAndCommentsTest {
         BookingDtoForItemHost lastBooking = BookingDtoForItemHost.builder()
                 .id(1L)
                 .bookerId(1L)
-                .start(LocalDateTime.of(2023,01,01,10,00,00))
-                .end(LocalDateTime.of(2023,01,01,11,00,00))
+                .start(LocalDateTime.of(2023, 01, 01, 10, 00, 00))
+                .end(LocalDateTime.of(2023, 01, 01, 11, 00, 00))
                 .build();
 
         BookingDtoForItemHost nextBooking = BookingDtoForItemHost.builder()
                 .id(2L)
                 .bookerId(2L)
-                .start(LocalDateTime.of(2023,01,01,11,00,00))
-                .end(LocalDateTime.of(2023,01,01,12,00,00))
+                .start(LocalDateTime.of(2023, 01, 01, 11, 00, 00))
+                .end(LocalDateTime.of(2023, 01, 01, 12, 00, 00))
                 .build();
 
         CommentDtoToReturn comment1 = CommentDtoToReturn.builder()
                 .id(1L)
                 .authorName("username1")
                 .text("text")
-                .created(LocalDateTime.of(2023,01,01,10,00,00))
+                .created(LocalDateTime.of(2023, 01, 01, 10, 00, 00))
                 .build();
 
         CommentDtoToReturn comment2 = CommentDtoToReturn.builder()
                 .id(2L)
                 .authorName("username1")
                 .text("text")
-                .created(LocalDateTime.of(2023,01,01,9,00,00))
+                .created(LocalDateTime.of(2023, 01, 01, 9, 00, 00))
                 .build();
 
 

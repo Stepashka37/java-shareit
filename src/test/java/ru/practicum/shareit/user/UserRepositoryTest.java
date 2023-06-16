@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ActiveProfiles(profiles = {"ci,test"})
-@DataJpaTest (
+@DataJpaTest(
         properties = {
                 "spring.jpa.properties.javax.persistence.validation.mode=none"
         }
@@ -114,8 +114,8 @@ public class UserRepositoryTest {
         assertThat(underTest.findById(user1.getId()))
                 .isPresent()
                 .hasValueSatisfying(u -> {
-                        assertThat(u).isEqualTo(user1);
-    });
+                    assertThat(u).isEqualTo(user1);
+                });
 
     }
 

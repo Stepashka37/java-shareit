@@ -129,7 +129,6 @@ class ItemRequestServiceImplTest {
                 .build();
 
 
-
         ItemRequest itemRequest1 = ItemRequest.builder()
                 .id(1L)
                 .description("request1 description")
@@ -190,7 +189,6 @@ class ItemRequestServiceImplTest {
                 .name("User2")
                 .email("Useremail2@yandex.ru")
                 .build();
-
 
 
         ItemRequest itemRequest1 = ItemRequest.builder()
@@ -394,12 +392,11 @@ class ItemRequestServiceImplTest {
                 .build();
 
 
-
         when(userRepository.findById(1L)).thenReturn(Optional.of(itemOwner));
         when(itemRequestRepository.findById(1L)).thenReturn(Optional.of(itemRequest1));
         when(itemRepository.findAllByRequestId(1L)).thenReturn(List.of(item1));
         // When
-       ItemRequestDto itemRequestDto = underTest.getRequestById(1L, 1L);
+        ItemRequestDto itemRequestDto = underTest.getRequestById(1L, 1L);
         // Then
         assertThat(itemRequestDto).isNotNull();
         assertThat(itemRequestDto.getDescription()).isEqualTo(itemRequest1.getDescription());
@@ -439,7 +436,6 @@ class ItemRequestServiceImplTest {
                 .isAvailable(true)
                 .request(itemRequest1)
                 .build();
-
 
 
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
@@ -483,7 +479,6 @@ class ItemRequestServiceImplTest {
                 .isAvailable(true)
                 .request(itemRequest1)
                 .build();
-
 
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(itemOwner));
