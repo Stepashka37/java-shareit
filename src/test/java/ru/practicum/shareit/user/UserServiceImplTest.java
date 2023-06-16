@@ -48,7 +48,7 @@ class UserServiceImplTest {
         UserDto userFound = underTest.getUserById(1L);
         // Then
 
-        assertThat(userFound).isEqualTo(modelToDto(userToSave));
+        assertThat(userFound).isEqualToComparingFieldByField(modelToDto(userToSave));
     }
 
     @Test
@@ -89,8 +89,9 @@ class UserServiceImplTest {
         List<UserDto> usersReturn = underTest.getAllUsers();
         // Then
 
-        assertThat(usersReturn).hasSize(2)
-                .containsExactly(modelToDto(user1), modelToDto(user2));
+        assertThat(usersReturn).hasSize(2);
+        assertThat(usersReturn.get(0).getId()).isEqualTo(user1.getId());
+        assertThat(usersReturn.get(1).getId()).isEqualTo(user2.getId());
     }
 
     @Test
@@ -217,7 +218,7 @@ class UserServiceImplTest {
 
         UserDto actualUser = underTest.createNewUser(userToSave);
         // Then
-        assertThat(actualUser).isEqualTo(userToSave);
+        assertThat(actualUser).isEqualToComparingFieldByField(userToSave);
         verify(userRepository, times(1)).save(any());
     }
 

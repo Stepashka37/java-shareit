@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -27,17 +26,5 @@ public class CommentDtoToReturn {
         this.created = created;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CommentDtoToReturn that = (CommentDtoToReturn) o;
-        return id == that.id && text.equals(that.text) && authorName.equals(that.authorName) && created.equals(that.created);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, text, authorName, created);
-    }
 
 }

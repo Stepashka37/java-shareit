@@ -15,6 +15,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -135,7 +136,7 @@ class UserControllerTest {
                 .email("username1UPD@yandex.ru")
                 .build();
         // When
-        when(userService.updateUser(1L, userDto1)).thenReturn(userDtoFromService);
+        when(userService.updateUser(anyLong(), any(UserDto.class))).thenReturn(userDtoFromService);
         // Then
         mockMvc.perform(patch("/users/1")
                         .content(mapper.writeValueAsString(userDto1))

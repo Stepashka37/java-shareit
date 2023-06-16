@@ -30,13 +30,5 @@ public class BookingDtoToCreate {
         this.itemId = itemId;
     }
 
-        @Override
-        public String toString() {
-            return "BookingDtoToCreateBuilder{" +
-                    "start=" + start +
-                    ", end=" + end +
-                    ", itemId=" + itemId +
-                    '}';
-        }
     }
 

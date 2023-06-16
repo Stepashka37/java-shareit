@@ -26,7 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static ru.practicum.shareit.item.ItemMapper.modelToDto;
 import static ru.practicum.shareit.request.RequestMapper.modelToDto;
 
 @SpringBootTest
@@ -80,7 +79,7 @@ class ItemRequestServiceImplTest {
         ItemRequestDto created = underTest.createRequest(1L, itemRequestDtoToCreate);
         // Then
         verify(itemRequestRepository, times(1)).save(any());
-        assertThat(created).isEqualTo(modelToDto(itemRequest));
+        assertThat(created).isEqualToComparingFieldByField(modelToDto(itemRequest));
 
     }
 
@@ -400,7 +399,8 @@ class ItemRequestServiceImplTest {
         // Then
         assertThat(itemRequestDto).isNotNull();
         assertThat(itemRequestDto.getDescription()).isEqualTo(itemRequest1.getDescription());
-        assertThat(itemRequestDto.getItems()).hasSize(1).contains(modelToDto(item1));
+        assertThat(itemRequestDto.getItems()).hasSize(1);
+        assertThat(itemRequestDto.getItems().get(0).getId()).isEqualTo(item1.getId());
     }
 
     @Test

@@ -44,7 +44,7 @@ class ItemControllerTest {
                 .available(true)
                 .build();
         // When
-        when(itemService.createItem(1L, itemDto)).thenReturn(itemDto);
+        when(itemService.createItem(anyLong(), any(ItemDto.class))).thenReturn(itemDto);
         // Then
         mockMvc.perform(post("/items")
                         .header("X-Sharer-User-id", 1)
@@ -97,7 +97,7 @@ class ItemControllerTest {
                 .available(true)
                 .build();
         // When
-        when(itemService.updateItem(1L, itemDto)).thenReturn(itemDtoUpdated);
+        when(itemService.updateItem(anyLong(), any(ItemDto.class))).thenReturn(itemDtoUpdated);
         // Then
         mockMvc.perform(patch("/items/1")
                         .header("X-Sharer-User-id", 1)

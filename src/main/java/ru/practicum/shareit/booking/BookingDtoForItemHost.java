@@ -26,5 +26,4 @@ public class BookingDtoForItemHost {
         this.bookerId = bookerId;
     }
 
-
 }

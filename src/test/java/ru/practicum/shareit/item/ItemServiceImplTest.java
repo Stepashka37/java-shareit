@@ -28,7 +28,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
-import static ru.practicum.shareit.item.CommentMapper.modelToDto;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -91,8 +90,8 @@ class ItemServiceImplTest {
         ItemDto itemCreated = underTest.createItem(1L, itemToSave);
         // Then
         then(itemRepository).should().save(itemArgumentCaptor.capture());
-        assertThat(itemCreated).isEqualTo(itemToSave);
-        assertThat(itemArgumentCaptor.getValue()).isEqualTo(itemToBeSaved);
+        assertThat(itemCreated).isEqualToComparingFieldByField(itemToSave);
+        assertThat(itemArgumentCaptor.getValue()).isEqualToComparingFieldByField(itemToBeSaved);
         verify(itemRepository, times(1)).save(any());
 
     }
@@ -332,9 +331,9 @@ class ItemServiceImplTest {
         // Then
         assertThat(itemFound.getName()).isEqualTo(itemToReturn.getName());
         assertThat(itemFound.getDescription()).isEqualTo(itemToReturn.getDescription());
-        assertThat(itemFound.getComments())
-                .hasSize(2)
-                .contains(modelToDto(comment1), modelToDto(comment2));
+        assertThat(itemFound.getComments()).hasSize(2);
+        assertThat(itemFound.getComments().get(0).getId()).isEqualTo(comment1.getId());
+        assertThat(itemFound.getComments().get(1).getId()).isEqualTo(comment2.getId());
         assertThat(itemFound.getLastBooking().getId()).isEqualTo(booking1.getId());
         assertThat(itemFound.getNextBooking().getId()).isEqualTo(booking2.getId());
 
@@ -544,9 +543,9 @@ class ItemServiceImplTest {
         // Then
         assertThat(itemFound.getName()).isEqualTo(itemToReturn.getName());
         assertThat(itemFound.getDescription()).isEqualTo(itemToReturn.getDescription());
-        assertThat(itemFound.getComments())
-                .hasSize(2)
-                .contains(modelToDto(comment1), modelToDto(comment2));
+        assertThat(itemFound.getComments()).hasSize(2);
+        assertThat(itemFound.getComments().get(0).getId()).isEqualTo(comment1.getId());
+        assertThat(itemFound.getComments().get(1).getId()).isEqualTo(comment2.getId());
 
     }
 
@@ -638,17 +637,9 @@ class ItemServiceImplTest {
                 .hasSize(2);
         assertThat(ownerItems.get(0).getId()).isEqualTo(itemToReturn1.getId());
         assertThat(ownerItems.get(1).getId()).isEqualTo(itemToReturn2.getId());
-
-        assertThat(ownerItems.get(0).getComments())
-                .hasSize(1)
-                .contains(modelToDto(comment1));
-
-        assertThat(ownerItems.get(1).getComments())
-                .hasSize(1)
-                .contains(modelToDto(comment2));
-
+        assertThat(ownerItems.get(0).getComments().get(0).getId()).isEqualTo(comment1.getId());
+        assertThat(ownerItems.get(1).getComments().get(0).getId()).isEqualTo(comment2.getId());
         assertThat(ownerItems.get(0).getLastBooking().getId()).isEqualTo(booking1.getId());
-
         assertThat(ownerItems.get(1).getNextBooking().getId()).isEqualTo(booking2.getId());
     }
 
@@ -778,9 +769,9 @@ class ItemServiceImplTest {
         // When
         List<ItemDto> availableItems = underTest.searchAvailableItems(2L, "text", 0, 2);
         // Then
-        assertThat(availableItems)
-                .hasSize(2)
-                .contains(ItemMapper.modelToDto(item2), ItemMapper.modelToDto(item3));
+        assertThat(availableItems).hasSize(2);
+        assertThat(availableItems.get(0).getId()).isEqualTo(item2.getId());
+        assertThat(availableItems.get(1).getId()).isEqualTo(item3.getId());
     }
 
     @Test

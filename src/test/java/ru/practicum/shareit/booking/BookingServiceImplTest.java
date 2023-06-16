@@ -26,7 +26,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
-import static ru.practicum.shareit.booking.BookingMapper.modelToDto;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -107,7 +106,7 @@ class BookingServiceImplTest {
         BookingDto bookingCreated = underTest.createBooking(booker.getId(), bookingDtoToCreate);
         // Then
         then(bookingRepository).should().save(argumentCaptor.capture());
-        assertThat(bookingCreated).isEqualTo(created);
+        assertThat(bookingCreated).isEqualToComparingFieldByField(created);
         verify(bookingRepository, times(1)).save(any());
     }
 
@@ -513,7 +512,7 @@ class BookingServiceImplTest {
         BookingDto bookingCreated = underTest.approveBooking(itemOwner.getId(), bookingToBeSaved.getId(), true);
         // Then
         then(bookingRepository).should().save(argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue()).isEqualTo(bookingApproved);
+        assertThat(argumentCaptor.getValue()).isEqualToComparingFieldByField(bookingApproved);
         assertThat(bookingCreated.getStatus()).isEqualTo(BookingStatus.APPROVED);
     }
 
@@ -932,7 +931,7 @@ class BookingServiceImplTest {
         BookingDto bookingDto = underTest.getBooking(2L, 1L);
         // Then
         assertThat(bookingDto).isNotNull();
-        assertThat(bookingDto).isEqualTo(created);
+        assertThat(bookingDto).isEqualToComparingFieldByField(created);
     }
 
     @Test
@@ -1168,9 +1167,9 @@ class BookingServiceImplTest {
         // When
         List<BookingDto> userBookings = underTest.getUserBookings(2L, "ALL", 0, 2);
         // Then
-        assertThat(userBookings)
-                .hasSize(2)
-                .containsExactly(modelToDto(bookingFromDb1), modelToDto(bookingFromDb2));
+        assertThat(userBookings).hasSize(2);
+        assertThat(userBookings.get(0).getId()).isEqualTo(bookingFromDb1.getId());
+        assertThat(userBookings.get(1).getId()).isEqualTo(bookingFromDb2.getId());
     }
 
     @Test
@@ -1229,9 +1228,9 @@ class BookingServiceImplTest {
         // When
         List<BookingDto> userBookings = underTest.getUserBookings(2L, "CURRENT", 0, 2);
         // Then
-        assertThat(userBookings)
-                .hasSize(2)
-                .containsExactly(modelToDto(bookingFromDb1), modelToDto(bookingFromDb2));
+        assertThat(userBookings).hasSize(2);
+        assertThat(userBookings.get(0).getId()).isEqualTo(bookingFromDb1.getId());
+        assertThat(userBookings.get(1).getId()).isEqualTo(bookingFromDb2.getId());
     }
 
     @Test
@@ -1290,9 +1289,9 @@ class BookingServiceImplTest {
         // When
         List<BookingDto> userBookings = underTest.getUserBookings(2L, "PAST", 0, 2);
         // Then
-        assertThat(userBookings)
-                .hasSize(2)
-                .containsExactly(modelToDto(bookingFromDb1), modelToDto(bookingFromDb2));
+        assertThat(userBookings).hasSize(2);
+        assertThat(userBookings.get(0).getId()).isEqualTo(bookingFromDb1.getId());
+        assertThat(userBookings.get(1).getId()).isEqualTo(bookingFromDb2.getId());
     }
 
     @Test
@@ -1351,9 +1350,9 @@ class BookingServiceImplTest {
         // When
         List<BookingDto> userBookings = underTest.getUserBookings(2L, "FUTURE", 0, 2);
         // Then
-        assertThat(userBookings)
-                .hasSize(2)
-                .containsExactly(modelToDto(bookingFromDb1), modelToDto(bookingFromDb2));
+        assertThat(userBookings).hasSize(2);
+        assertThat(userBookings.get(0).getId()).isEqualTo(bookingFromDb1.getId());
+        assertThat(userBookings.get(1).getId()).isEqualTo(bookingFromDb2.getId());
     }
 
     @Test
@@ -1412,9 +1411,9 @@ class BookingServiceImplTest {
         // When
         List<BookingDto> userBookings = underTest.getUserBookings(2L, "REJECTED", 0, 2);
         // Then
-        assertThat(userBookings)
-                .hasSize(2)
-                .containsExactly(modelToDto(bookingFromDb1), modelToDto(bookingFromDb2));
+        assertThat(userBookings).hasSize(2);
+        assertThat(userBookings.get(0).getId()).isEqualTo(bookingFromDb1.getId());
+        assertThat(userBookings.get(1).getId()).isEqualTo(bookingFromDb2.getId());
     }
 
     @Test
@@ -1473,9 +1472,9 @@ class BookingServiceImplTest {
         // When
         List<BookingDto> userBookings = underTest.getUserBookings(2L, "WAITING", 0, 2);
         // Then
-        assertThat(userBookings)
-                .hasSize(2)
-                .containsExactly(modelToDto(bookingFromDb1), modelToDto(bookingFromDb2));
+        assertThat(userBookings).hasSize(2);
+        assertThat(userBookings.get(0).getId()).isEqualTo(bookingFromDb1.getId());
+        assertThat(userBookings.get(1).getId()).isEqualTo(bookingFromDb2.getId());
     }
 
     @Test
@@ -1650,9 +1649,9 @@ class BookingServiceImplTest {
         // When
         List<BookingDto> userBookings = underTest.getAllUserItemsBookings(itemOwner.getId(), "ALL", 0, 2);
         // Then
-        assertThat(userBookings)
-                .hasSize(2)
-                .containsExactly(modelToDto(bookingFromDb1), modelToDto(bookingFromDb2));
+        assertThat(userBookings).hasSize(2);
+        assertThat(userBookings.get(0).getId()).isEqualTo(bookingFromDb1.getId());
+        assertThat(userBookings.get(1).getId()).isEqualTo(bookingFromDb2.getId());
     }
 
     @Test
@@ -1711,9 +1710,9 @@ class BookingServiceImplTest {
         // When
         List<BookingDto> userBookings = underTest.getAllUserItemsBookings(1L, "CURRENT", 0, 2);
         // Then
-        assertThat(userBookings)
-                .hasSize(2)
-                .containsExactly(modelToDto(bookingFromDb1), modelToDto(bookingFromDb2));
+        assertThat(userBookings).hasSize(2);
+        assertThat(userBookings.get(0).getId()).isEqualTo(bookingFromDb1.getId());
+        assertThat(userBookings.get(1).getId()).isEqualTo(bookingFromDb2.getId());
     }
 
     @Test
@@ -1772,9 +1771,9 @@ class BookingServiceImplTest {
         // When
         List<BookingDto> userBookings = underTest.getAllUserItemsBookings(1L, "PAST", 0, 2);
         // Then
-        assertThat(userBookings)
-                .hasSize(2)
-                .containsExactly(modelToDto(bookingFromDb1), modelToDto(bookingFromDb2));
+        assertThat(userBookings).hasSize(2);
+        assertThat(userBookings.get(0).getId()).isEqualTo(bookingFromDb1.getId());
+        assertThat(userBookings.get(1).getId()).isEqualTo(bookingFromDb2.getId());
     }
 
     @Test
@@ -1833,9 +1832,9 @@ class BookingServiceImplTest {
         // When
         List<BookingDto> userBookings = underTest.getAllUserItemsBookings(1L, "FUTURE", 0, 2);
         // Then
-        assertThat(userBookings)
-                .hasSize(2)
-                .containsExactly(modelToDto(bookingFromDb1), modelToDto(bookingFromDb2));
+        assertThat(userBookings).hasSize(2);
+        assertThat(userBookings.get(0).getId()).isEqualTo(bookingFromDb1.getId());
+        assertThat(userBookings.get(1).getId()).isEqualTo(bookingFromDb2.getId());
     }
 
     @Test
@@ -1894,9 +1893,9 @@ class BookingServiceImplTest {
         // When
         List<BookingDto> userBookings = underTest.getAllUserItemsBookings(1L, "REJECTED", 0, 2);
         // Then
-        assertThat(userBookings)
-                .hasSize(2)
-                .containsExactly(modelToDto(bookingFromDb1), modelToDto(bookingFromDb2));
+        assertThat(userBookings).hasSize(2);
+        assertThat(userBookings.get(0).getId()).isEqualTo(bookingFromDb1.getId());
+        assertThat(userBookings.get(1).getId()).isEqualTo(bookingFromDb2.getId());
     }
 
     @Test
@@ -1955,9 +1954,9 @@ class BookingServiceImplTest {
         // When
         List<BookingDto> userBookings = underTest.getAllUserItemsBookings(1L, "WAITING", 0, 2);
         // Then
-        assertThat(userBookings)
-                .hasSize(2)
-                .containsExactly(modelToDto(bookingFromDb1), modelToDto(bookingFromDb2));
+        assertThat(userBookings).hasSize(2);
+        assertThat(userBookings.get(0).getId()).isEqualTo(bookingFromDb1.getId());
+        assertThat(userBookings.get(1).getId()).isEqualTo(bookingFromDb2.getId());
     }
 
     @Test

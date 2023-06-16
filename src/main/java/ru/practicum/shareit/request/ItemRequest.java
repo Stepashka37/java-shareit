@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 
 @Getter
@@ -41,19 +40,6 @@ public class ItemRequest {
         this.description = description;
         this.requestor = requestor;
         this.created = created;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ItemRequest that = (ItemRequest) o;
-        return id == that.id && description.equals(that.description) && requestor.equals(that.requestor) && created.equals(that.created);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, description, requestor, created);
     }
 
     }

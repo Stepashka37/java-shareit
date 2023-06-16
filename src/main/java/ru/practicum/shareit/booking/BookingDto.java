@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.User;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 
 @Getter
@@ -38,19 +37,6 @@ public class BookingDto {
         this.item = item;
         this.booker = booker;
         this.status = status;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BookingDto that = (BookingDto) o;
-        return id == that.id && start.equals(that.start) && end.equals(that.end) && item.equals(that.item) && booker.equals(that.booker) && status == that.status;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, start, end, item, booker, status);
     }
 
 }
