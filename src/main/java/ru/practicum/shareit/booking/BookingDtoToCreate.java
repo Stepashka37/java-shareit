@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,9 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
 public class BookingDtoToCreate {
+
     @NotNull
     @FutureOrPresent
     private LocalDateTime start;
@@ -27,37 +30,6 @@ public class BookingDtoToCreate {
         this.itemId = itemId;
     }
 
-    public static BookingDtoToCreateBuilder builder() {
-        return new BookingDtoToCreateBuilder();
-    }
-
-    public static class BookingDtoToCreateBuilder {
-        private @NotNull @FutureOrPresent LocalDateTime start;
-        private @NotNull @FutureOrPresent LocalDateTime end;
-        private long itemId;
-
-        BookingDtoToCreateBuilder() {
-        }
-
-        public BookingDtoToCreateBuilder start(@NotNull @FutureOrPresent LocalDateTime start) {
-            this.start = start;
-            return this;
-        }
-
-        public BookingDtoToCreateBuilder end(@NotNull @FutureOrPresent LocalDateTime end) {
-            this.end = end;
-            return this;
-        }
-
-        public BookingDtoToCreateBuilder itemId(long itemId) {
-            this.itemId = itemId;
-            return this;
-        }
-
-        public BookingDtoToCreate build() {
-            return new BookingDtoToCreate(start, end, itemId);
-        }
-
         @Override
         public String toString() {
             return "BookingDtoToCreateBuilder{" +
@@ -67,4 +39,4 @@ public class BookingDtoToCreate {
                     '}';
         }
     }
-}
+

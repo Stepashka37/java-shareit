@@ -130,7 +130,7 @@ public class BookingServiceImpl implements BookingService {
                 result = bookingRepository.findAllWaitingBookingsByUser(userId, pageable);
                 break;
             default:
-                throw new StateValidationException("Unknown state: UNSUPPORTED_STATUS");
+                result = Page.empty();
         }
         log.info("Получили все бронирования пользователя с id{}", userId);
         return result.stream()
@@ -172,7 +172,7 @@ public class BookingServiceImpl implements BookingService {
                 result = bookingRepository.findAllItemsWaitingBookings(userId, pageable2);
                 break;
             default:
-                throw new StateValidationException("Unknown state: UNSUPPORTED_STATUS");
+                result = Page.empty();
         }
         log.info("Получили список бронирований всех предметов пользователя с id{}", userId);
         return result.stream()

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import ru.practicum.shareit.request.ItemRequest;
@@ -13,6 +14,7 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name = "items")
+@Builder
 public class Item {
 
     @Id
@@ -64,57 +66,4 @@ public class Item {
         return Objects.hash(id, name, description, isAvailable, owner, request);
     }
 
-    public static ItemBuilder builder() {
-        return new ItemBuilder();
-    }
-
-    public static class ItemBuilder {
-        private long id;
-        private String name;
-        private String description;
-        private Boolean isAvailable;
-        private User owner;
-        private ItemRequest request;
-
-        ItemBuilder() {
-        }
-
-        public ItemBuilder id(long id) {
-            this.id = id;
-            return this;
-        }
-
-        public ItemBuilder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public ItemBuilder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public ItemBuilder isAvailable(Boolean isAvailable) {
-            this.isAvailable = isAvailable;
-            return this;
-        }
-
-        public ItemBuilder owner(User owner) {
-            this.owner = owner;
-            return this;
-        }
-
-        public ItemBuilder request(ItemRequest request) {
-            this.request = request;
-            return this;
-        }
-
-        public Item build() {
-            return new Item(id, name, description, isAvailable, owner, request);
-        }
-
-        public String toString() {
-            return "Item.ItemBuilder(id=" + this.id + ", name=" + this.name + ", description=" + this.description + ", isAvailable=" + this.isAvailable + ", owner=" + this.owner + ", request=" + this.request + ")";
-        }
-    }
 }

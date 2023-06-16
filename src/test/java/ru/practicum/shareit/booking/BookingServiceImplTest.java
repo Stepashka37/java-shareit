@@ -777,6 +777,108 @@ class BookingServiceImplTest {
     }
 
     @Test
+    void itShouldApproveBookingWhenUserIsItemHost() {
+        // Given
+        User itemOwner = User.builder()
+                .id(1L)
+                .name("User1")
+                .email("Useremail@yandex.ru")
+                .build();
+
+        User booker = User.builder()
+                .id(2L)
+                .name("User2")
+                .email("Useremail1@yandex.ru")
+                .build();
+
+        Item itemFromDb = Item.builder()
+                .id(1L)
+                .name("Item1")
+                .description("Item1 Description")
+                .isAvailable(true)
+                .owner(itemOwner)
+                .build();
+
+        Booking bookingToBeSaved = Booking.builder()
+                .id(1L)
+                .start(LocalDateTime.now())
+                .end(LocalDateTime.now().plusMinutes(10))
+                .status(BookingStatus.WAITING)
+                .item(itemFromDb)
+                .booker(booker)
+                .build();
+
+        Booking bookingApproved = Booking.builder()
+                .id(1L)
+                .start(bookingToBeSaved.getStart())
+                .end(bookingToBeSaved.getEnd())
+                .booker(booker)
+                .item(itemFromDb)
+                .status(BookingStatus.APPROVED)
+                .build();
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(itemOwner));
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(bookingToBeSaved));
+        when(bookingRepository.save(any())).thenReturn(bookingApproved);
+
+        // When
+        BookingDto bookingDto = underTest.approveBooking(itemOwner.getId(), bookingToBeSaved.getId(), true);
+        // Then
+        assertThat(bookingDto.getStatus()).isEqualTo(BookingStatus.APPROVED);
+    }
+
+    @Test
+    void itShouldRejectBookingWhenUserIsItemHost() {
+        // Given
+        User itemOwner = User.builder()
+                .id(1L)
+                .name("User1")
+                .email("Useremail@yandex.ru")
+                .build();
+
+        User booker = User.builder()
+                .id(2L)
+                .name("User2")
+                .email("Useremail1@yandex.ru")
+                .build();
+
+        Item itemFromDb = Item.builder()
+                .id(1L)
+                .name("Item1")
+                .description("Item1 Description")
+                .isAvailable(true)
+                .owner(itemOwner)
+                .build();
+
+        Booking bookingToBeSaved = Booking.builder()
+                .id(1L)
+                .start(LocalDateTime.now())
+                .end(LocalDateTime.now().plusMinutes(10))
+                .status(BookingStatus.WAITING)
+                .item(itemFromDb)
+                .booker(booker)
+                .build();
+
+        Booking bookingRejected = Booking.builder()
+                .id(1L)
+                .start(bookingToBeSaved.getStart())
+                .end(bookingToBeSaved.getEnd())
+                .booker(booker)
+                .item(itemFromDb)
+                .status(BookingStatus.REJECTED)
+                .build();
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(itemOwner));
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(bookingToBeSaved));
+        when(bookingRepository.save(any())).thenReturn(bookingRejected);
+
+        // When
+        BookingDto bookingDto = underTest.approveBooking(itemOwner.getId(), bookingToBeSaved.getId(), false);
+        // Then
+        assertThat(bookingDto.getStatus()).isEqualTo(BookingStatus.REJECTED);
+    }
+
+    @Test
     void itShouldGetBooking() {
         // Given
         User itemOwner = User.builder()
@@ -890,7 +992,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void itShouldNotGetBookingWhenItemNotFound() {
+    void itShouldNotGetBookingWhenBookingNotFound() {
         // Given
         User itemOwner = User.builder()
                 .id(1L)
