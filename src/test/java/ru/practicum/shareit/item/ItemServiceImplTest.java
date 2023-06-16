@@ -113,7 +113,7 @@ class ItemServiceImplTest {
                 .email("Useremail@yandex.ru")
                 .build();
 
-        doThrow(new UserNotFoundException("User not found")).when(userRepository).findById(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         //When
         //Then
@@ -204,7 +204,7 @@ class ItemServiceImplTest {
                 .owner(itemOwner)
                 .build();
 
-        doThrow(new UserNotFoundException("User not found")).when(userRepository).findById(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
 
         // When
@@ -248,7 +248,7 @@ class ItemServiceImplTest {
                 .build();
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(itemOwner));
-        doThrow(new ItemNotFoundException("Item not found")).when(itemRepository).findById(1L);
+        when(itemRepository.findById(1L)).thenReturn(Optional.empty());
 
 
         // When
@@ -405,7 +405,7 @@ class ItemServiceImplTest {
                 .end(LocalDateTime.now().plusMinutes(15))
                 .build();
 
-        doThrow(new UserNotFoundException("User not found")).when(userRepository).findById(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         // When
         // Then
@@ -480,7 +480,7 @@ class ItemServiceImplTest {
                 .build();
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(itemOwner));
-        doThrow(new ItemNotFoundException("Item not found")).when(itemRepository).findById(1L);
+        when(itemRepository.findById(1L)).thenReturn(Optional.empty());
         // When
         // Then
         assertThatThrownBy(() -> underTest.getItemById(1L, 1L))
@@ -723,7 +723,7 @@ class ItemServiceImplTest {
                 .end(LocalDateTime.now().plusMinutes(15))
                 .build();
 
-        doThrow(new UserNotFoundException("User not found")).when(userRepository).findById(1L);
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
         // When
         // Then
         assertThatThrownBy(() -> underTest.getOwnerItems(1L, 0, 1))

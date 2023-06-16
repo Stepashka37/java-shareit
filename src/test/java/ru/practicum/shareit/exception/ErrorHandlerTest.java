@@ -86,7 +86,7 @@ class ErrorHandlerTest {
     void itShouldHandleBookingValidationExc() {
         // Given
         ItemNotAvailableException itemNotAvailableException = new ItemNotAvailableException("Item not available exception");
-        ErrorResponse result = errorHandler.annotationValidationExc(itemNotAvailableException);
+        ErrorResponse result = errorHandler.bookingValidationExc(itemNotAvailableException);
         // When
         // Then
         assertThat(result).isNotNull();
@@ -97,7 +97,7 @@ class ErrorHandlerTest {
     void itShouldHandleUnsupportedStatusExc() {
         // Given
         StateValidationException stateValidationException = new StateValidationException("Unknown state: UNSUPPORTED_STATUS");
-        ErrorResponse result = errorHandler.annotationValidationExc(stateValidationException);
+        ErrorResponse result = errorHandler.unsupportedStatusExc(stateValidationException);
         // When
         // Then
         assertThat(result).isNotNull();
