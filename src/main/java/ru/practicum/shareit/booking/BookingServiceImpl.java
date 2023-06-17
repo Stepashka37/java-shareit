@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
@@ -35,6 +36,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto createBooking(long userId, BookingDtoToCreate bookingDto) {
         if (bookingDto.getStart().isEqual(bookingDto.getEnd()) ||
                 bookingDto.getEnd().isBefore(bookingDto.getStart())) {
@@ -56,6 +58,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto approveBooking(long userId, long bookingId, boolean approved) {
         User userFromDb = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -78,7 +81,6 @@ public class BookingServiceImpl implements BookingService {
         } else {
             throw new HostNotFoundException("User is not the item host");
         }
-
         return modelToDto(booking);
     }
 

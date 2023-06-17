@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingDtoForItemHost;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -18,9 +19,7 @@ import ru.practicum.shareit.user.UserRepository;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.BookingMapper.modelToDtoForItem;
@@ -49,6 +48,7 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
+    @Transactional
     public ItemDto createItem(long userId, ItemDto itemDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -62,6 +62,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto updateItem(long userId, ItemDto itemDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -98,13 +99,11 @@ public class ItemServiceImpl implements ItemService {
         if (itemFound.getOwner().getId() == userId) {
             List<Booking> itemBookings = bookingRepository.findAllBookingsByItemId(itemId);
             if (itemBookings.size() >= 1) {
-                List<Booking> allPastBookings = itemBookings.stream().filter(x -> x.getStart().isBefore(LocalDateTime.now())).collect(Collectors.toList());
                 BookingDtoForItemHost lastBooking = itemBookings.stream().filter(x -> x.getStart().isBefore(LocalDateTime.now()))
                         .sorted(Comparator.comparing(Booking::getEnd).reversed())
                         .findFirst().map(x -> modelToDtoForItem(x))
                         .orElse(null);
 
-                List<Booking> allFutureBookings = itemBookings.stream().filter(x -> x.getStart().isAfter(LocalDateTime.now())).collect(Collectors.toList());
                 BookingDtoForItemHost nextBooking = itemBookings.stream().filter(x -> x.getStart().isAfter(LocalDateTime.now()))
                         .sorted(Comparator.comparing(Booking::getStart))
                         .findFirst().map(x -> modelToDtoForItem(x))
@@ -123,27 +122,36 @@ public class ItemServiceImpl implements ItemService {
         int page = from / size;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
         Page<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId, pageable);
-        List<ItemDtoWithBookingsAndComments> result = new ArrayList<>();
-        for (Item userItem : userItems) {
-            ItemDtoWithBookingsAndComments dtoToReturn = modelToDtoWithBookings(userItem);
-            List<Booking> itemBookings = bookingRepository.findAllBookingsByItemId(userItem.getId());
-            List<CommentDtoToReturn> itemComments = commentRepository.findAllByItem(userItem.getId())
+
+        List<Long> itemsIds = userItems.stream()
+                .map(x -> x.getId())
+                .collect(Collectors.toList());
+
+        Map<Long, List<CommentDtoToReturn>> comments = new HashMap<>();
+
+        Map<Long, List<Booking>> bookings = new HashMap<>();
+
+        for (Long itemsId : itemsIds) {
+            List<CommentDtoToReturn> itemComments = commentRepository.findAllByItem(itemsId)
                     .stream()
                     .map(x -> modelToDto(x))
                     .collect(Collectors.toList());
+            comments.put(itemsId, itemComments);
+            List<Booking> itemBookings = bookingRepository.findAllBookingsByItemId(itemsId);
+            bookings.put(itemsId, itemBookings);
+        }
+
+        List<ItemDtoWithBookingsAndComments> result = new ArrayList<>();
+        for (Item userItem : userItems) {
+            ItemDtoWithBookingsAndComments dtoToReturn = modelToDtoWithBookings(userItem);
+            List<Booking> itemBookings = bookings.get(userItem.getId());
+            List<CommentDtoToReturn> itemComments = comments.get(userItem.getId());
             dtoToReturn.setComments(itemComments);
             if (!itemBookings.isEmpty()) {
-                List<Booking> allBookings = itemBookings.stream().filter(x -> x.getEnd().isBefore(LocalDateTime.now())).collect(Collectors.toList());
-                /*BookingDtoForItemHost lastBooking = itemBookings.stream().filter(x -> x.getEnd().isBefore(LocalDateTime.now()))
-                        .findFirst().map(x -> modelToDtoForItem(x)).get();*/
                 BookingDtoForItemHost lastBooking = itemBookings.stream().filter(x -> x.getStart().isBefore(LocalDateTime.now()))
                         .sorted(Comparator.comparing(Booking::getEnd).reversed())
                         .findFirst().map(x -> modelToDtoForItem(x))
                         .orElse(null);
-
-               /* BookingDtoForItemHost nextBooking = itemBookings.stream().filter(x -> x.getStart().isAfter(LocalDateTime.now()))
-                        .sorted(Comparator.comparing(Booking::getStart))
-                        .findFirst().map(x -> modelToDtoForItem(x)).get();*/
                 BookingDtoForItemHost nextBooking = itemBookings.stream().filter(x -> x.getStart().isAfter(LocalDateTime.now()))
                         .sorted(Comparator.comparing(Booking::getStart))
                         .findFirst().map(x -> modelToDtoForItem(x))
@@ -174,6 +182,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public CommentDtoToReturn addComment(long userId, long itemId, CommentDtoToCreate dtoToCreate) {
 
         User userFound = userRepository.findById(userId)

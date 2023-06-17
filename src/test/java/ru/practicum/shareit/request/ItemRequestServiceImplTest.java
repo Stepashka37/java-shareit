@@ -162,8 +162,7 @@ class ItemRequestServiceImplTest {
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(requestor));
         when(itemRequestRepository.findAllByRequestorIdOrderByCreatedAsc(1L)).thenReturn(List.of(itemRequest1, itemRequest2));
-        when(itemRepository.findAllByRequestId(1L)).thenReturn(List.of(item1));
-        when(itemRepository.findAllByRequestId(2L)).thenReturn(List.of(item2));
+       when(itemRepository.findAllByRequestIdIn(anyList())).thenReturn(List.of(item1, item2));
         // When
         List<ItemRequestDto> userRequests = underTest.getUserRequests(1L);
         // Then
@@ -294,8 +293,7 @@ class ItemRequestServiceImplTest {
         Page<ItemRequest> page = new PageImpl<ItemRequest>(List.of(itemRequest1, itemRequest2), pageable, 2);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(itemRequestRepository.findAllUserRequest(1L, pageable)).thenReturn(page);
-        when(itemRepository.findAllByRequestId(1L)).thenReturn(List.of(item1));
-        when(itemRepository.findAllByRequestId(2L)).thenReturn(List.of(item2));
+        when(itemRepository.findAllByRequestIdIn(anyList())).thenReturn(List.of(item1, item2));
         // When
         List<ItemRequestDto> usersRequests = underTest.getOtherUsersRequests(1L, 0, 2);
         // Then

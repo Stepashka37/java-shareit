@@ -21,6 +21,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "and it.isAvailable is true) ")
     Page<Item> findAllByText(@Param("text") String text, Pageable pageable);
 
+    List<Item> findAllByRequestIdIn(List<Long> requests);
+
     List<Item> findAllByRequestId(long requestId);
 
 }
