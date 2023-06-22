@@ -1,20 +1,25 @@
 package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingDtoForItemHost;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.ItemNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.BookingMapper.modelToDtoForItem;
@@ -31,27 +36,33 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository, CommentRepository commentRepository) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository, CommentRepository commentRepository, ItemRequestRepository itemRequestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
 
     @Override
+    @Transactional
     public ItemDto createItem(long userId, ItemDto itemDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
+        ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId()).orElse(null);
         Item itemToSave = dtoToModel(itemDto);
         itemToSave.setOwner(user);
+        itemToSave.setRequest(itemRequest);
         Item itemCreated = itemRepository.save(itemToSave);
         log.info("Создали предмет с id{}", itemCreated.getId());
         return modelToDto(itemCreated);
     }
 
     @Override
+    @Transactional
     public ItemDto updateItem(long userId, ItemDto itemDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -88,13 +99,11 @@ public class ItemServiceImpl implements ItemService {
         if (itemFound.getOwner().getId() == userId) {
             List<Booking> itemBookings = bookingRepository.findAllBookingsByItemId(itemId);
             if (itemBookings.size() >= 1) {
-                List<Booking> allPastBookings = itemBookings.stream().filter(x -> x.getStart().isBefore(LocalDateTime.now())).collect(Collectors.toList());
                 BookingDtoForItemHost lastBooking = itemBookings.stream().filter(x -> x.getStart().isBefore(LocalDateTime.now()))
                         .sorted(Comparator.comparing(Booking::getEnd).reversed())
                         .findFirst().map(x -> modelToDtoForItem(x))
                         .orElse(null);
 
-                List<Booking> allFutureBookings = itemBookings.stream().filter(x -> x.getStart().isAfter(LocalDateTime.now())).collect(Collectors.toList());
                 BookingDtoForItemHost nextBooking = itemBookings.stream().filter(x -> x.getStart().isAfter(LocalDateTime.now()))
                         .sorted(Comparator.comparing(Booking::getStart))
                         .findFirst().map(x -> modelToDtoForItem(x))
@@ -107,23 +116,47 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDtoWithBookingsAndComments> getOwnerItems(long userId) {
+    public List<ItemDtoWithBookingsAndComments> getOwnerItems(long userId, Integer from, Integer size) {
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        List<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
+        int page = from / size;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<Item> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId, pageable);
+
+        List<Long> itemsIds = userItems.stream()
+                .map(x -> x.getId())
+                .collect(Collectors.toList());
+
+        Map<Long, List<CommentDtoToReturn>> comments = new HashMap<>();
+
+        Map<Long, List<Booking>> bookings = new HashMap<>();
+
+        for (Long itemsId : itemsIds) {
+            List<CommentDtoToReturn> itemComments = commentRepository.findAllByItem(itemsId)
+                    .stream()
+                    .map(x -> modelToDto(x))
+                    .collect(Collectors.toList());
+            comments.put(itemsId, itemComments);
+            List<Booking> itemBookings = bookingRepository.findAllBookingsByItemId(itemsId);
+            bookings.put(itemsId, itemBookings);
+        }
+
         List<ItemDtoWithBookingsAndComments> result = new ArrayList<>();
         for (Item userItem : userItems) {
             ItemDtoWithBookingsAndComments dtoToReturn = modelToDtoWithBookings(userItem);
-            List<Booking> itemBookings = bookingRepository.findAllBookingsByItemId(userItem.getId());
+            List<Booking> itemBookings = bookings.get(userItem.getId());
+            List<CommentDtoToReturn> itemComments = comments.get(userItem.getId());
+            dtoToReturn.setComments(itemComments);
             if (!itemBookings.isEmpty()) {
-                List<Booking> allBookings = itemBookings.stream().filter(x -> x.getEnd().isBefore(LocalDateTime.now())).collect(Collectors.toList());
-                BookingDtoForItemHost lastBooking = itemBookings.stream().filter(x -> x.getEnd().isBefore(LocalDateTime.now()))
-                        .findFirst().map(x -> modelToDtoForItem(x)).get();
-
+                BookingDtoForItemHost lastBooking = itemBookings.stream().filter(x -> x.getStart().isBefore(LocalDateTime.now()))
+                        .sorted(Comparator.comparing(Booking::getEnd).reversed())
+                        .findFirst().map(x -> modelToDtoForItem(x))
+                        .orElse(null);
                 BookingDtoForItemHost nextBooking = itemBookings.stream().filter(x -> x.getStart().isAfter(LocalDateTime.now()))
                         .sorted(Comparator.comparing(Booking::getStart))
-                        .findFirst().map(x -> modelToDtoForItem(x)).get();
-                dtoToReturn.setLastBooking(modelToDtoForItem(allBookings.get(0)));
+                        .findFirst().map(x -> modelToDtoForItem(x))
+                        .orElse(null);
+                dtoToReturn.setLastBooking(lastBooking);
                 dtoToReturn.setNextBooking(nextBooking);
             }
             result.add(dtoToReturn);
@@ -134,18 +167,22 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchAvailableItems(long userId, String text) {
+    public List<ItemDto> searchAvailableItems(long userId, String text, Integer from, Integer size) {
         if (text.isBlank()) return new ArrayList<ItemDto>();
         userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        List<Item> availableItems = itemRepository.findAllByText(text.toLowerCase());
-        log.info("Получили все доступные предметы по фразе ", text);
-        return availableItems.stream()
+        int page = from / size;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        List<ItemDto> availableItems = itemRepository.findAllByText(text.toLowerCase(), pageable)
+                .stream()
                 .map(x -> modelToDto(x))
                 .collect(Collectors.toList());
+        log.info("Получили все доступные предметы по фразе ", text);
+        return availableItems;
     }
 
     @Override
+    @Transactional
     public CommentDtoToReturn addComment(long userId, long itemId, CommentDtoToCreate dtoToCreate) {
 
         User userFound = userRepository.findById(userId)

@@ -1,66 +1,36 @@
 package ru.practicum.shareit.request;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.item.ItemDto;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
+@Builder
 public class ItemRequestDto {
 
-    @NotBlank
-    @Size(max = 500)
-    private String description;
+    private long id;
 
-    @NotNull
-    private User requestor;
+    @NotBlank
+    private String description;
 
     private LocalDateTime created;
 
-    ItemRequestDto(@NotBlank @Size(max = 500) String description, @NotNull User requestor, LocalDateTime created) {
+    private List<ItemDto> items;
+
+    public ItemRequestDto() {
+    }
+
+    public ItemRequestDto(long id, String description, LocalDateTime created, List<ItemDto> items) {
+        this.id = id;
         this.description = description;
-        this.requestor = requestor;
         this.created = created;
+        this.items = items;
     }
 
-    public static ItemRequestDtoBuilder builder() {
-        return new ItemRequestDtoBuilder();
-    }
-
-    public static class ItemRequestDtoBuilder {
-        private @NotBlank @Size(max = 500) String description;
-        private @NotNull User requestor;
-        private LocalDateTime created;
-
-        ItemRequestDtoBuilder() {
-        }
-
-        public ItemRequestDtoBuilder description(@NotBlank @Size(max = 500) String description) {
-            this.description = description;
-            return this;
-        }
-
-        public ItemRequestDtoBuilder requestor(@NotNull User requestor) {
-            this.requestor = requestor;
-            return this;
-        }
-
-        public ItemRequestDtoBuilder created(LocalDateTime created) {
-            this.created = created;
-            return this;
-        }
-
-        public ItemRequestDto build() {
-            return new ItemRequestDto(description, requestor, created);
-        }
-
-        public String toString() {
-            return "ItemRequestDto.ItemRequestDtoBuilder(description=" + this.description + ", requestor=" + this.requestor + ", created=" + this.created + ")";
-        }
-    }
 }

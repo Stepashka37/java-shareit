@@ -3,11 +3,13 @@ package ru.practicum.shareit.item;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 
 @RestController
 @RequestMapping("/items")
+@Validated
 public class ItemController {
     private final ItemService itemService;
 
@@ -35,13 +37,17 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDtoWithBookingsAndComments> getOwnerItems(@RequestHeader("X-Sharer-User-id") long userId) {
-        return itemService.getOwnerItems(userId);
+    public List<ItemDtoWithBookingsAndComments> getOwnerItems(@RequestHeader("X-Sharer-User-id") long userId,
+                                                              @RequestParam (value = "from", defaultValue = "0") @Min(0)  Integer from,
+                                                              @RequestParam (value = "size", defaultValue = "10") @Min(1)  Integer size) {
+        return itemService.getOwnerItems(userId, from, size);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchAvailableItems(@RequestHeader("X-Sharer-User-id") long userId, @RequestParam String text) {
-        return itemService.searchAvailableItems(userId, text);
+    public List<ItemDto> searchAvailableItems(@RequestHeader("X-Sharer-User-id") long userId, @RequestParam String text,
+                                              @RequestParam (value = "from", defaultValue = "0") @Min(0)  Integer from,
+                                              @RequestParam (value = "size", defaultValue = "10") @Min(1)  Integer size) {
+        return itemService.searchAvailableItems(userId, text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

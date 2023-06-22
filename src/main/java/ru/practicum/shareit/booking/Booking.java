@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import ru.practicum.shareit.item.Item;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Table(name = "bookings")
 @Getter
 @Setter
+@Builder
 public class Booking {
 
     @Id
@@ -48,62 +50,6 @@ public class Booking {
     }
 
     public Booking() {
-
-    }
-
-    public static BookingBuilder builder() {
-        return new BookingBuilder();
-    }
-
-
-    public static class BookingBuilder {
-        private long id;
-        private LocalDateTime start;
-        private LocalDateTime end;
-        private Item item;
-        private User booker;
-        private BookingStatus status;
-
-        BookingBuilder() {
-        }
-
-        public BookingBuilder id(long id) {
-            this.id = id;
-            return this;
-        }
-
-        public BookingBuilder start(LocalDateTime start) {
-            this.start = start;
-            return this;
-        }
-
-        public BookingBuilder end(LocalDateTime end) {
-            this.end = end;
-            return this;
-        }
-
-        public BookingBuilder item(Item item) {
-            this.item = item;
-            return this;
-        }
-
-        public BookingBuilder booker(User booker) {
-            this.booker = booker;
-            return this;
-        }
-
-        public BookingBuilder status(BookingStatus status) {
-            this.status = status;
-            return this;
-        }
-
-        public Booking build() {
-            return new Booking(id, start, end, item, booker, status);
-        }
-
-        public String toString() {
-            return "Booking.BookingBuilder(id=" + this.id + ", start=" + this.start + ", end=" + this.end + ", item=" + this.item + ", booker=" + this.booker + ", status=" + this.status + ")";
-        }
     }
 }
 

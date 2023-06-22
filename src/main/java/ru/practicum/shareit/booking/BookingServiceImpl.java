@@ -1,7 +1,12 @@
 package ru.practicum.shareit.booking;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.*;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
@@ -10,7 +15,6 @@ import ru.practicum.shareit.user.UserRepository;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,6 +36,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto createBooking(long userId, BookingDtoToCreate bookingDto) {
         if (bookingDto.getStart().isEqual(bookingDto.getEnd()) ||
                 bookingDto.getEnd().isBefore(bookingDto.getStart())) {
@@ -53,7 +58,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto approveBooking(long userId, long bookingId, boolean approved) {
+        User userFromDb = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
         if ((booking.getStatus() == BookingStatus.APPROVED && approved == true)
@@ -73,7 +81,6 @@ public class BookingServiceImpl implements BookingService {
         } else {
             throw new HostNotFoundException("User is not the item host");
         }
-
         return modelToDto(booking);
     }
 
@@ -85,7 +92,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new BookingNotFoundException("Booking not found"));
 
         if (booking.getBooker().getId() != userId && booking.getItem().getOwner().getId() != userId) {
-            throw new UserNotFoundException("Data is available for booking author or " +
+            throw new UserNotFoundException("Data is available for booker or " +
                     "for item owner");
         }
         log.info("Пользователь с id{} получил данные бронирования с id{}", userId, bookingId);
@@ -93,7 +100,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getUserBookings(long userId, String stateAsString) {
+    public List<BookingDto> getUserBookings(long userId, String stateAsString, Integer from, Integer size) {
         User userFromDb = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         State state;
@@ -102,30 +109,31 @@ public class BookingServiceImpl implements BookingService {
         } catch (Exception e) {
             throw new StateValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
-        List<Booking> result = new ArrayList<>();
+        int page = from / size;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        Page<Booking> result;
         switch (state) {
             case ALL:
-                result = bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+                result = bookingRepository.findAllByBookerIdOrderByStartDesc(userId, pageable);
                 break;
             case CURRENT:
-                result = bookingRepository.findAllCurrentBookingsByUser(userId, LocalDateTime.now());
+                result = bookingRepository.findAllCurrentBookingsByUser(userId, LocalDateTime.now(), pageable);
                 break;
             case PAST:
-                result = bookingRepository.findAllPastBookingsByUser(userId, LocalDateTime.now());
+                result = bookingRepository.findAllPastBookingsByUser(userId, LocalDateTime.now(), pageable);
                 break;
             case REJECTED:
-                result = bookingRepository.findAllRejectedBookingsByUser(userId);
+                result = bookingRepository.findAllRejectedBookingsByUser(userId, pageable);
                 break;
             case FUTURE:
-                result = bookingRepository.findAllFutureBookingsByUser(userId, LocalDateTime.now());
+                result = bookingRepository.findAllFutureBookingsByUser(userId, LocalDateTime.now(), pageable);
                 break;
             case WAITING:
-                result = bookingRepository.findAllWaitingBookingsByUser(userId);
+                result = bookingRepository.findAllWaitingBookingsByUser(userId, pageable);
                 break;
             default:
-                throw new StateValidationException("Unknown state: UNSUPPORTED_STATUS");
+                result = Page.empty();
         }
-        System.out.println(result);
         log.info("Получили все бронирования пользователя с id{}", userId);
         return result.stream()
                 .map(x -> modelToDto(x))
@@ -133,13 +141,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAllUserItemsBookings(long userId, String stateAsString) {
+    public List<BookingDto> getAllUserItemsBookings(long userId, String stateAsString, Integer from, Integer size) {
         User userFromDb = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        List<Long> userItems = itemRepository.findAllByOwnerIdOrderByIdAsc(userId)
-                .stream()
-                .map(x -> x.getId())
-                .collect(Collectors.toList());
+        int page = from / size;
         State state;
         try {
              state = State.valueOf(stateAsString);
@@ -147,29 +152,29 @@ public class BookingServiceImpl implements BookingService {
             throw new StateValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
 
-        List<Booking> result = new ArrayList<>();
-
+        Page<Booking> result;
+        Pageable pageable2 = PageRequest.of(page, size, Sort.by("start").ascending());
         switch (state) {
             case ALL:
-                result = bookingRepository.findAllItemsBookings(userItems);
+                result = bookingRepository.findAllItemsBookings(userId, pageable2);
                 break;
             case CURRENT:
-                result = bookingRepository.findAllItemsCurrentBookings(userItems, LocalDateTime.now());
+                result = bookingRepository.findAllItemsCurrentBookings(userId, LocalDateTime.now(), pageable2);
                 break;
             case PAST:
-                result = bookingRepository.findAllItemsPastBookings(userItems, LocalDateTime.now());
+                result = bookingRepository.findAllItemsPastBookings(userId, LocalDateTime.now(), pageable2);
                 break;
             case REJECTED:
-                result = bookingRepository.findAllItemsRejectedBookings(userItems);
+                result = bookingRepository.findAllItemsRejectedBookings(userId, pageable2);
                 break;
             case FUTURE:
-                result = bookingRepository.findAllItemsFutureBookings(userItems, LocalDateTime.now());
+                result = bookingRepository.findAllItemsFutureBookings(userId, LocalDateTime.now(), pageable2);
                 break;
             case WAITING:
-                result = bookingRepository.findAllItemsWaitingBookings(userItems);
+                result = bookingRepository.findAllItemsWaitingBookings(userId, pageable2);
                 break;
             default:
-                throw new StateValidationException("Unknown state: UNSUPPORTED_STATUS");
+                result = Page.empty();
         }
         log.info("Получили список бронирований всех предметов пользователя с id{}", userId);
         return result.stream()

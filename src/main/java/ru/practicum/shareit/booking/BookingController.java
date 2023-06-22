@@ -4,11 +4,13 @@ import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 
 @RestController
 @RequestMapping(path = "/bookings")
+@Validated
 public class BookingController {
     private final BookingService bookingService;
 
@@ -38,15 +40,19 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getUserBookings(@RequestHeader("X-Sharer-User-id") long userId,
-                                            @Nullable @RequestParam(value = "state", defaultValue = "ALL") String state) {
-        List<BookingDto> result = bookingService.getUserBookings(userId, state);
+                                            @Nullable @RequestParam(value = "state", defaultValue = "ALL") String state,
+                                            @RequestParam (value = "from", defaultValue = "0") @Min(0)  Integer from,
+                                            @RequestParam (value = "size", defaultValue = "10") @Min(1)  Integer size) {
+        List<BookingDto> result = bookingService.getUserBookings(userId, state, from, size);
         return result;
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getAllUserItemsBookings(@RequestHeader("X-Sharer-User-id") long userId,
-                                                    @Nullable @RequestParam(value = "state", defaultValue = "ALL") String state) {
-        List<BookingDto> result = bookingService.getAllUserItemsBookings(userId, state);
+                                                    @Nullable @RequestParam(value = "state", defaultValue = "ALL") String state,
+                                                    @RequestParam (value = "from", defaultValue = "0") @Min(0)  Integer from,
+                                                    @RequestParam (value = "size", defaultValue = "10") @Min(1)  Integer size) {
+        List<BookingDto> result = bookingService.getAllUserItemsBookings(userId, state, from, size);
         return result;
     }
 }
