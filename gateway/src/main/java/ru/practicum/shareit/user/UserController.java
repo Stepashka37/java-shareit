@@ -16,7 +16,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 public class UserController {
 
     private final UserClient userClient;
-   
 
     @GetMapping("/{userId}")
     public ResponseEntity<Object> getUserById(@PathVariable long userId) {

@@ -19,7 +19,7 @@ import javax.validation.constraints.Min;
 public class ItemRequestController {
 
     private final ItemRequestClient itemRequestClient;
-    
+
     @PostMapping
     public ResponseEntity<Object> createRequest(@RequestHeader("X-Sharer-User-id") long userId,
                                                 @Validated @RequestBody  ItemRequestDtoToCreate itemRequestDtoToCreate) {
