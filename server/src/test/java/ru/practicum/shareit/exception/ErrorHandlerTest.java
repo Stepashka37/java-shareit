@@ -93,16 +93,6 @@ class ErrorHandlerTest {
         assertThat(itemNotAvailableException.getMessage()).isEqualTo(result.getDescription());
     }
 
-    @Test
-    void itShouldHandleUnsupportedStatusExc() {
-        // Given
-        StateValidationException stateValidationException = new StateValidationException("Unknown state: UNSUPPORTED_STATUS");
-        ErrorResponse result = errorHandler.unsupportedStatusExc(stateValidationException);
-        // When
-        // Then
-        assertThat(result).isNotNull();
-        assertThat(stateValidationException.getMessage()).isEqualTo(result.getDescription());
-    }
 
 
 }

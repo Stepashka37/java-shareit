@@ -13,14 +13,6 @@ import javax.validation.ValidationException;
 @Slf4j
 public class ErrorHandler {
 
-    @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class, BookingNotFoundException.class,
-            HostNotFoundException.class, RequestNotFound.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse notFoundExc(final RuntimeException exc) {
-        log.error("404: " + exc.getMessage());
-        return new ErrorResponse("Object not found", exc.getMessage());
-    }
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse anyOtherExc(final Exception exc) {
@@ -28,18 +20,12 @@ public class ErrorHandler {
         return new ErrorResponse("Internal server error", exc.getMessage());
     }
 
-    @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
+   @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
+    //ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse annotationValidationExc(final RuntimeException exc) {
         log.error("400: " + exc.getMessage());
-        return new ErrorResponse("Ошибка валидации с помощью аннотаций", exc.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse bookingValidationExc(final ItemNotAvailableException exc) {
-        log.error("400: " + exc.getMessage());
-        return new ErrorResponse("Ошибка бронирования - данный предмет уже занят", exc.getMessage());
+        return new ErrorResponse("Ошибка валидации данных", exc.getMessage());
     }
 
     @ExceptionHandler(StateValidationException.class)

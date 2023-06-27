@@ -103,12 +103,12 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getUserBookings(long userId, String stateAsString, Integer from, Integer size) {
         User userFromDb = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        State state;
-        try {
+        State state  = State.valueOf(stateAsString);
+       /* try {
             state = State.valueOf(stateAsString);
         } catch (Exception e) {
             throw new StateValidationException("Unknown state: UNSUPPORTED_STATUS");
-        }
+        }*/
         int page = from / size;
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
         Page<Booking> result;
@@ -145,12 +145,12 @@ public class BookingServiceImpl implements BookingService {
         User userFromDb = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         int page = from / size;
-        State state;
-        try {
+        State state  = State.valueOf(stateAsString);
+        /*try {
              state = State.valueOf(stateAsString);
         } catch (Exception e) {
             throw new StateValidationException("Unknown state: UNSUPPORTED_STATUS");
-        }
+        }*/
 
         Page<Booking> result;
         Pageable pageable2 = PageRequest.of(page, size, Sort.by("start").ascending());
