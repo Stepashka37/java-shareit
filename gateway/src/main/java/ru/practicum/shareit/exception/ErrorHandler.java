@@ -20,8 +20,7 @@ public class ErrorHandler {
         return new ErrorResponse("Internal server error", exc.getMessage());
     }
 
-   @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
-    //ExceptionHandler({ValidationException.class})
+    @ExceptionHandler({ValidationException.class, MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse annotationValidationExc(final RuntimeException exc) {
         log.error("400: " + exc.getMessage());
